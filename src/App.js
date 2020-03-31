@@ -1,8 +1,6 @@
 import React from 'react';
-import GoogleMapReact from 'google-map-react';
+import Map from './Map.js';
 import './App.css';
-
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 function App() {
   return (
@@ -10,7 +8,9 @@ function App() {
       <header className="App-header">
         What’s near me?
       </header>
-      <main></main>
+      <main className="App-map">
+          <Map />
+      </main>
     </div>
   );
 }
