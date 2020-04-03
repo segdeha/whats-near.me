@@ -25,3 +25,7 @@
     right: 0;
     top: calc(30px + 2vmin);
 }
+
+i {
+    color: blue;
+}

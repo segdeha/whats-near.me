@@ -1,27 +1,10 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
+import getNearby from './lib/getNearby';
+
+const Me = () => <i>•</i>;
 
 const Pin = ({ text }) => <div>{text}</div>;
-
-const getNearby = async (lat, lng) => {
-    let url = `https://segdeha.com/api/nearby.php?lat=${lat}&lng=${lng}`;
-    let response = await fetch(url);
-
-    if (response.ok) { // if HTTP-status is 200-299
-        // get the response body (the method explained below)
-        let json = await response.json();
-        return json;
-    }
-    else {
-        console.error(`HTTP Error: ${response.status}`);
-        return {
-            status: 400,
-            query: {
-                pages: []
-            }
-        };
-    }
-};
 
 const Pins = pins => {
     return (
@@ -37,41 +20,43 @@ class Map extends Component {
         };
     }
 
-    componentDidMount() {
-        // TODO make this dynamic based on browser location
-        let lat = 45.53341;
-        let lng = -122.6307;
-
-        let places = getNearby(lat,lng);
-
-        places.then(json => {
-
-console.log(json)
-
-            this.setState({
-                pins: json.query.pages
-            });
-        });
-
-    }
-
     static defaultProps = {
         center: {
             lat: 45.564455,
             lng: -122.630576
         },
-        zoom: 11
+        zoom: 15
     };
+
+    componentDidMount() {
+        let newNearbyPlaces = loc => {
+            let lat = loc.coords.latitude;
+            let lng = loc.coords.longitude;
+            let places = getNearby(lat,lng);
+            places.then(json => {
+
+console.log(json)
+
+                this.setState({
+                    pins: json.query.pages
+                });
+            });
+        };
+
+        let geo = navigator.geolocation.watchPosition(newNearbyPlaces)
+    }
 
     render() {
         let { pins } = this.state;
+        let { center, zoom } = this.props;
         return (
           <div style={{ height: '100vh', width: '100vw' }}>
             <GoogleMapReact
               bootstrapURLKeys={{ key: 'AIzaSyDvSl4yqevaoY63RJwzf74Civuq4uCBWf0' }}
-              defaultCenter={this.props.center}
-              defaultZoom={this.props.zoom}
+              defaultCenter={ center }
+              defaultZoom={ zoom }
             >
+                <Me center={ center } />
                 <Pins pins={ pins } />
             </GoogleMapReact>
           </div>
