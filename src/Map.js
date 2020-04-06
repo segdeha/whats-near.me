@@ -4,7 +4,14 @@ import getNearby from './lib/getNearby';
 
 const Me = () => <i>•</i>;
 
-const Pin = ({ title, lat, lng }) => <div className="Map-pin" lat={ lat } lng={ lng }>{ title }</div>;
+const Pin = ({ title, lat, lng, thumb }) => {
+  const style = {
+    backgroundImage: `url(${thumb})`
+  };
+  return (
+    <div className="Map-pin" style={ style } lat={ lat } lng={ lng } />
+  );
+};
 
 class Map extends Component {
   constructor(props) {
@@ -28,6 +35,9 @@ class Map extends Component {
       }
       let places = getNearby(latitude, longitude);
       places.then(json => {
+
+// console.log('json.query.pages', json.query.pages)
+
         this.setState({
           places: json.query.pages
         });
@@ -51,10 +61,10 @@ class Map extends Component {
           >
           <Me center={ center } />
           {places.map(place => {
-            const { pageid, title, coordinates } = place;
+            const { pageid, title, coordinates, thumbnail } = place;
             if (coordinates.length > 0) {
               let { lat, lon } = coordinates[0];
-              return <Pin key={ pageid } title={ title } lat={ lat } lng={ lon } />
+              return <Pin key={ pageid } title={ title } thumb={ thumbnail.source } lat={ lat } lng={ lon } />
             }
             else {
               return null;
