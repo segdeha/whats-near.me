@@ -48,5 +48,16 @@
 }
 
 i {
-  color: blue;
+  animation: me 2s infinite;
+  background-color: rgba(0,0,128,1);
+  border-radius: 2vw;
+  display: block;
+  height: 4vw;
+  width: 4vw;
+}
+
+@keyframes me {
+  0%   { opacity: 0.33; }
+  50%  { opacity: 0.67; }
+  100% { opacity: 0.33; }
 }

@@ -36,6 +36,12 @@ class Map extends Component {
       const { map, maps } = this.state;
       if (map && maps) {
         map.panTo(new maps.LatLng(latitude, longitude));
+        this.setState({
+          center: {
+            lat: latitude,
+            lng: longitude
+          }
+        });
       }
       let places = getNearby(latitude, longitude);
       places.then(json => {
@@ -63,7 +69,6 @@ class Map extends Component {
               this.setState({ map, maps });
             }}
           >
-          <Me center={ center } />
           {places.map(place => {
             const { pageid, title, coordinates, thumbnail } = place;
             if (coordinates.length > 0) {
@@ -74,6 +79,7 @@ class Map extends Component {
               return null;
             }
           })}
+          <Me lat={ center.lat } lng={ center.lng } />
         </GoogleMapReact>
       </div>
     );
