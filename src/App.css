@@ -10,8 +10,8 @@
   flex-direction: column;
   font-size: calc(10px + 2vmin);
   font-weight: bold;
+  height: 5vh;
   justify-content: center;
-  min-height: calc(30px + 2vmin);
 }
 
 .App-link {
@@ -19,11 +19,11 @@
 }
 
 .App-map {
-  bottom: 0;
+  height: 45vh;
   left: 0;
   position: absolute;
   right: 0;
-  top: calc(30px + 2vmin);
+  top: 5vh;
 }
 
 .Map-pin {
@@ -34,6 +34,15 @@
   height: 4vh;
   overflow: hidden;
   width: 10vw;
+}
+
+.App-info {
+  background: white;
+  bottom: 0;
+  height: 50vh;
+  left: 0;
+  position: absolute;
+  right: 0;
 }
 
 i {

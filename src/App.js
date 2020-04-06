@@ -1,5 +1,6 @@
 import React from 'react';
-import Map from './Map.js';
+import Map from './Map';
+import Intro from './Intro';
 import './App.css';
 
 function App() {
@@ -11,6 +12,9 @@ function App() {
       <main className="App-map">
         <Map />
       </main>
+      <footer className="App-info">
+        <Intro />
+      </footer>
     </div>
   );
 }
