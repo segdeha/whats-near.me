@@ -9,7 +9,7 @@ function App() {
         What’s near me?
       </header>
       <main className="App-map">
-          <Map />
+        <Map />
       </main>
     </div>
   );

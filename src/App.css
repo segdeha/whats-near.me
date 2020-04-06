@@ -1,31 +1,38 @@
 .App {
-    text-align: center;
+  text-align: center;
 }
 
 .App-header {
-    align-items: center;
-    background-color: #282c34;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    font-size: calc(10px + 2vmin);
-    font-weight: bold;
-    justify-content: center;
-    min-height: calc(30px + 2vmin);
+  align-items: center;
+  background-color: #282c34;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(10px + 2vmin);
+  font-weight: bold;
+  justify-content: center;
+  min-height: calc(30px + 2vmin);
 }
 
 .App-link {
-    color: #61dafb;
+  color: #61dafb;
 }
 
 .App-map {
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: calc(30px + 2vmin);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: calc(30px + 2vmin);
+}
+
+.Map-pin {
+  background: white;
+  border: solid 1px black;
+  border-radius: 4px;
+  box-shadow: rgba(0,0,0,0.5) 0 2px 4px;
 }
 
 i {
-    color: blue;
+  color: blue;
 }
