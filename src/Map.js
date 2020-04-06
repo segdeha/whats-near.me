@@ -6,10 +6,14 @@ const Me = () => <i>•</i>;
 
 const Pin = ({ title, lat, lng, thumb }) => {
   const style = {
-    backgroundImage: `url(${thumb})`
+    height: '100%',
+    objectFit: 'cover',
+    width: '100%'
   };
   return (
-    <div className="Map-pin" style={ style } lat={ lat } lng={ lng } />
+    <div className="Map-pin" lat={ lat } lng={ lng }>
+      <img style={ style } src={thumb} alt={title} />
+    </div>
   );
 };
 
