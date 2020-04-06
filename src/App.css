@@ -31,6 +31,9 @@
   border: solid 1px black;
   border-radius: 4px;
   box-shadow: rgba(0,0,0,0.5) 0 2px 4px;
+  height: 4vh;
+  overflow: hidden;
+  width: 10vw;
 }
 
 i {
