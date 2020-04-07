@@ -4,28 +4,35 @@ import getNearby from './lib/getNearby';
 
 const Me = () => <i>•</i>;
 
-const Pin = ({ title, lat, lng, thumb }) => {
+const Pin = ({ title, lat, lng, thumb, setPlace }) => {
   const style = {
     height: '100%',
     objectFit: 'cover',
     width: '100%'
   };
+  const place = {
+    title,
+    thumb
+  };
   return (
-    <div className="Map-pin" lat={ lat } lng={ lng }>
+    <div onClick={ () => { setPlace(place) } } className="Map-pin" lat={ lat } lng={ lng }>
       <img style={ style } src={thumb} alt={title} />
     </div>
   );
 };
 
+const defaultCenter = {
+  lat: 45.564455,
+  lng: -122.630576
+};
+
+const defaultZoom = 14;
+
 class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      center: { // the kennedy school
-        lat: 45.564455,
-        lng: -122.630576
-      },
-      zoom: 14,
+      center: defaultCenter, // the kennedy school
       places: []
     };
   }
@@ -53,17 +60,18 @@ class Map extends Component {
         });
       });
     };
-    let geo = navigator.geolocation.watchPosition(newNearbyPlaces)
+    navigator.geolocation.watchPosition(newNearbyPlaces)
   }
 
   render() {
-    let { places, center, zoom } = this.state;
+    let { places, center } = this.state;
+    let { setPlace } = this.props;
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <GoogleMapReact
             bootstrapURLKeys={{ key: 'AIzaSyDvSl4yqevaoY63RJwzf74Civuq4uCBWf0' }}
-            defaultCenter={ center }
-            defaultZoom={ zoom }
+            defaultCenter={ defaultCenter }
+            defaultZoom={ defaultZoom }
             yesIWantToUseGoogleMapApiInternals
             onGoogleApiLoaded={({ map, maps }) => {
               this.setState({ map, maps });
@@ -73,7 +81,7 @@ class Map extends Component {
             const { pageid, title, coordinates, thumbnail } = place;
             if (coordinates.length > 0) {
               let { lat, lon } = coordinates[0];
-              return <Pin key={ pageid } title={ title } thumb={ thumbnail.source } lat={ lat } lng={ lon } />
+              return <Pin key={ pageid } title={ title } thumb={ thumbnail.source } lat={ lat } lng={ lon } setPlace={ setPlace } />
             }
             else {
               return null;

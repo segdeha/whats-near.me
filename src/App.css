@@ -19,11 +19,13 @@
 }
 
 .App-map {
+  box-shadow: rgba(0,0,0,0.5) 0 2px 6px;
   height: 45vh;
   left: 0;
   position: absolute;
   right: 0;
   top: 5vh;
+  z-index: 100;
 }
 
 .Map-pin {

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 
 const style = {
   padding: '1px 1rem'
@@ -7,9 +7,11 @@ const style = {
 const Intro = props => {
   const { place } = props;
   if (place) {
+    const { title, thumb } = place;
     return (
       <div style={ style }>
-        { place }
+        <p>{ title }</p>
+        <img src={ thumb } alt={ title } />
       </div>
     );
   }
