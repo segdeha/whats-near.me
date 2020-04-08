@@ -20,7 +20,7 @@
 
 .App-map {
   box-shadow: rgba(0,0,0,0.5) 0 2px 6px;
-  height: 55vh;
+  height: 55%;
   left: 0;
   position: absolute;
   right: 0;
@@ -43,7 +43,7 @@
   background: white;
   bottom: 0;
   flex-direction: column;
-  height: 40vh;
+  height: 40%;
   left: 0;
   overflow: scroll;
   position: absolute;
