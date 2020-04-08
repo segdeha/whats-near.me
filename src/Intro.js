@@ -1,9 +1,7 @@
 import React from 'react';
 
 const style = {
-  padding: '1rem',
-  position: 'relative',
-  top: '1vh'
+  padding: '1rem'
 };
 
 const Intro = props => {
