@@ -21,7 +21,7 @@ const Pin = ({ title, lat, lng, thumb, setPlace }) => {
   );
 };
 
-const defaultCenter = {
+const defaultCenter = { // the kennedy school
   lat: 45.564455,
   lng: -122.630576
 };
@@ -32,12 +32,14 @@ class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      center: defaultCenter, // the kennedy school
+      center: defaultCenter,
       places: []
     };
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
+    const { geo } = this.props;
+
     let newNearbyPlaces = loc => {
       const { latitude, longitude } = loc.coords;
       const { map, maps } = this.state;
@@ -60,7 +62,7 @@ class Map extends Component {
         });
       });
     };
-    navigator.geolocation.watchPosition(newNearbyPlaces)
+    geo && navigator.geolocation.watchPosition(newNearbyPlaces)
   }
 
   render() {

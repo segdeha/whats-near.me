@@ -5,16 +5,18 @@ import './App.css';
 
 const App = () => {
   const [place, setPlace] = useState(null);
+  const [geo, allowGeo] = useState(null);
+
   return (
     <div className="App">
       <header className="App-header">
         What’s near me?
       </header>
       <main className="App-map">
-        <Map setPlace={ setPlace } />
+        <Map geo={ geo } setPlace={ setPlace } />
       </main>
       <footer className="App-info">
-        <Intro place={ place } />
+        <Intro geo={ geo } allowGeo={ allowGeo } place={ place } />
       </footer>
     </div>
   );
