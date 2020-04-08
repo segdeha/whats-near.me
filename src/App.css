@@ -42,10 +42,8 @@
 .App-info {
   background: white;
   bottom: 0;
-  display: flex;
   flex-direction: column;
   height: 40vh;
-  justify-content: center;
   left: 0;
   overflow: scroll;
   position: absolute;
