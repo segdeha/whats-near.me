@@ -28,6 +28,7 @@ class Map extends Component {
       timer: null,  // for setTimeout calls for new place fetches
       watcher: null // for geolocation.watchPosition ID
     };
+    this.logError = this.logError.bind(this);
     this.newNearbyPlaces = this.newNearbyPlaces.bind(this);
     this.watch = this.watch.bind(this);
   }
