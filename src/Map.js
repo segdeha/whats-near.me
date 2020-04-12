@@ -22,7 +22,8 @@ class Map extends Component {
     super(props);
     this.state = {
       center: this.defaultCenter,
-      places: []
+      places: [],
+      watcher: null // for geolocation.watchPosition ID
     };
   }
 
@@ -33,36 +34,52 @@ class Map extends Component {
 
   defaultZoom = 14;
 
-  geoError(err) {
+  logError(err) {
     // only log warnings in development
-    if (location.hostname !== 'whats-near.me') {
+    if (window.location.hostname !== 'whats-near.me') {
       console.warn('ERROR(' + err.code + '): ' + err.message)
     }
+  }
+
+  newNearbyPlaces(loc) {
+    const { latitude, longitude } = loc.coords;
+    const { map, maps } = this.state;
+    if (map && maps) {
+      map.panTo(new maps.LatLng(latitude, longitude));
+      this.setState({
+        center: {
+          lat: latitude,
+          lng: longitude
+        }
+      });
+    }
+    let places = getNearby(latitude, longitude);
+    places.then(json => {
+      this.unwatch();
+      this.setState({
+        places: json.query.pages
+      });
+    });
+  }
+
+  watch() {
+    this.unwatch();
+    this.setState({
+      watcher: navigator.geolocation.watchPosition(this.newNearbyPlaces.bind(this), this.logError)
+    });
+  }
+
+  unwatch() {
+    const { watcher } = this.state;
+    navigator.geolocation.clearWatch(watcher);
   }
 
   componentDidUpdate() {
     const { geo } = this.props;
 
-    const newNearbyPlaces = loc => {
-      const { latitude, longitude } = loc.coords;
-      const { map, maps } = this.state;
-      if (map && maps) {
-        map.panTo(new maps.LatLng(latitude, longitude));
-        this.setState({
-          center: {
-            lat: latitude,
-            lng: longitude
-          }
-        });
-      }
-      let places = getNearby(latitude, longitude);
-      places.then(json => {
-        this.setState({
-          places: json.query.pages
-        });
-      });
-    };
-    geo && navigator.geolocation.watchPosition(newNearbyPlaces, this.geoError)
+    if (geo) {
+      this.watch();
+    }
   };
 
   renderPins(places) {
