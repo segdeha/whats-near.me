@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import getNearby from './lib/getNearby';
+import isDev from './lib/isDev';
 
 const Me = () => <i>•</i>;
 
@@ -22,9 +23,17 @@ class Map extends Component {
     super(props);
     this.state = {
       center: this.defaultCenter,
-      places: []
+      places: [],
+      lastFetch: 0, // only fetch places once per minute max
+      timer: null,  // for setTimeout calls for new place fetches
+      watcher: null // for geolocation.watchPosition ID
     };
+    this.logError = this.logError.bind(this);
+    this.newNearbyPlaces = this.newNearbyPlaces.bind(this);
+    this.watch = this.watch.bind(this);
   }
+
+  interval = isDev() ? 1000 * 20 : 1000 * 60; // refetch more often in development
 
   defaultCenter = { // the kennedy school
     lat: 45.564455,
@@ -33,36 +42,57 @@ class Map extends Component {
 
   defaultZoom = 14;
 
-  geoError(err) {
+  logError(err) {
     // only log warnings in development
-    if (window.location.hostname !== 'whats-near.me') {
+    if (isDev()) {
       console.warn('ERROR(' + err.code + '): ' + err.message)
     }
   }
 
+  newNearbyPlaces(loc) {
+    const { latitude, longitude } = loc.coords;
+    const { map, maps } = this.state;
+    if (map && maps) {
+      map.panTo(new maps.LatLng(latitude, longitude));
+      this.setState({
+        center: {
+          lat: latitude,
+          lng: longitude
+        }
+      });
+    }
+    let places = getNearby(latitude, longitude);
+    places.then(json => {
+      this.unwatch();
+      this.setState({
+        places: json.query.pages
+      });
+    });
+  }
+
+  watch() {
+    const { lastFetch } = this.state;
+    const interval = this.interval;
+    const now = Date.now();
+    if (lastFetch + interval < now) {
+      this.setState({
+        lastFetch: now,
+        timer: setTimeout(this.watch, interval),
+        watcher: navigator.geolocation.watchPosition(this.newNearbyPlaces, this.logError)
+      });
+    }
+  }
+
+  unwatch() {
+    const { watcher } = this.state;
+    navigator.geolocation.clearWatch(watcher);
+  }
+
   componentDidUpdate() {
     const { geo } = this.props;
-
-    const newNearbyPlaces = loc => {
-      const { latitude, longitude } = loc.coords;
-      const { map, maps } = this.state;
-      if (map && maps) {
-        map.panTo(new maps.LatLng(latitude, longitude));
-        this.setState({
-          center: {
-            lat: latitude,
-            lng: longitude
-          }
-        });
-      }
-      let places = getNearby(latitude, longitude);
-      places.then(json => {
-        this.setState({
-          places: json.query.pages
-        });
-      });
-    };
-    geo && navigator.geolocation.watchPosition(newNearbyPlaces, this.geoError)
+    if (geo) {
+      this.watch();
+    }
   };
 
   renderPins(places) {
