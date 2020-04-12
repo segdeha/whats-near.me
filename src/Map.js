@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import getNearby from './lib/getNearby';
+import isDev from './lib/isDev';
 
 const Me = () => <i>•</i>;
 
@@ -23,9 +24,15 @@ class Map extends Component {
     this.state = {
       center: this.defaultCenter,
       places: [],
+      lastFetch: 0, // only fetch places once per minute max
+      timer: null,  // for setTimeout calls for new place fetches
       watcher: null // for geolocation.watchPosition ID
     };
+    this.newNearbyPlaces = this.newNearbyPlaces.bind(this);
+    this.watch = this.watch.bind(this);
   }
+
+  interval = isDev() ? 1000 * 20 : 1000 * 60; // refetch more often in development
 
   defaultCenter = { // the kennedy school
     lat: 45.564455,
@@ -36,7 +43,7 @@ class Map extends Component {
 
   logError(err) {
     // only log warnings in development
-    if (window.location.hostname !== 'whats-near.me') {
+    if (isDev()) {
       console.warn('ERROR(' + err.code + '): ' + err.message)
     }
   }
@@ -63,10 +70,16 @@ class Map extends Component {
   }
 
   watch() {
-    this.unwatch();
-    this.setState({
-      watcher: navigator.geolocation.watchPosition(this.newNearbyPlaces.bind(this), this.logError)
-    });
+    const { lastFetch } = this.state;
+    const interval = this.interval;
+    const now = Date.now();
+    if (lastFetch + interval < now) {
+      this.setState({
+        lastFetch: now,
+        timer: setTimeout(this.watch, interval),
+        watcher: navigator.geolocation.watchPosition(this.newNearbyPlaces, this.logError)
+      });
+    }
   }
 
   unwatch() {
@@ -76,7 +89,6 @@ class Map extends Component {
 
   componentDidUpdate() {
     const { geo } = this.props;
-
     if (geo) {
       this.watch();
     }
