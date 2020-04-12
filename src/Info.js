@@ -21,7 +21,7 @@ const Info = props => {
           geo ? <p><strong>Location shared!</strong></p>
               : <p><button onClick={ () => allowGeo(true) }>Share Location</button></p>
         }
-        <p>Once you’ve given the app access to your location, when it’s open you can discover interesting landmarks around you.</p>
+        <p>Once you’ve granted access to your location, when the app is open you can discover interesting landmarks around you.</p>
         <p>Tap on a marker on the map and more information about it will show up in this space. Have fun!</p>
         <p><strong>Note:</strong> Your location data is never stored in the app or on our servers!</p>
       </div>
