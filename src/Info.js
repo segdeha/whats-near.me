@@ -1,7 +1,7 @@
 import React from 'react';
 import { firstCap } from './lib/text';
 
-const Intro = props => {
+const Info = props => {
   const { place, geo, allowGeo } = props;
   if (place) {
     const { title, description, thumb } = place;
@@ -29,4 +29,4 @@ const Intro = props => {
   }
 };
 
-export default Intro;
+export default Info;

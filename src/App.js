@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Map from './Map';
-import Intro from './Intro';
+import Info from './Info';
 import './App.css';
 
 const App = () => {
@@ -16,7 +16,7 @@ const App = () => {
         <Map geo={ geo } setPlace={ setPlace } />
       </main>
       <footer className="App-info">
-        <Intro geo={ geo } allowGeo={ allowGeo } place={ place } />
+        <Info geo={ geo } allowGeo={ allowGeo } place={ place } />
       </footer>
     </div>
   );
