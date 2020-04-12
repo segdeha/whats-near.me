@@ -1,4 +1,5 @@
 import React from 'react';
+import { firstCap } from './lib/text';
 
 const style = {
   padding: '0 1rem'
@@ -7,12 +8,12 @@ const style = {
 const Intro = props => {
   const { place, geo, allowGeo } = props;
   if (place) {
-    const { title, thumb } = place;
+    const { title, description, thumb } = place;
     return (
       <div style={ style }>
-        <p><strong>{ title }</strong></p>
-        <img src={ thumb } alt={ title } />
-        <p>&nbsp;</p>
+        <p><strong>{ firstCap(title) }</strong></p>
+        <img src={ thumb } alt={ firstCap(title) } />
+        <p>{ firstCap(description) }</p>
       </div>
     );
   }

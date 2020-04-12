@@ -4,7 +4,7 @@ import getNearby from './lib/getNearby';
 
 const Me = () => <i>•</i>;
 
-const Pin = ({ title, lat, lng, thumb, setPlace }) => {
+const Pin = ({ title, description, lat, lng, thumb, setPlace }) => {
   const style = {
     height: '100%',
     objectFit: 'cover',
@@ -12,11 +12,12 @@ const Pin = ({ title, lat, lng, thumb, setPlace }) => {
   };
   const place = {
     title,
+    description,
     thumb
   };
   return (
     <div onClick={ () => { setPlace(place) } } className="Map-pin" lat={ lat } lng={ lng }>
-      <img style={ style } src={thumb} alt={title} />
+      <img style={ style } src={ thumb } alt={ title } />
     </div>
   );
 };
@@ -54,9 +55,6 @@ class Map extends Component {
       }
       let places = getNearby(latitude, longitude);
       places.then(json => {
-
-// console.log('json.query.pages', json.query.pages)
-
         this.setState({
           places: json.query.pages
         });
@@ -80,10 +78,10 @@ class Map extends Component {
             }}
           >
           {places.map(place => {
-            const { pageid, title, coordinates, thumbnail } = place;
+            const { pageid, coordinates, thumbnail } = place;
             if (coordinates.length > 0) {
               let { lat, lon } = coordinates[0];
-              return <Pin key={ pageid } title={ title } thumb={ thumbnail.source } lat={ lat } lng={ lon } setPlace={ setPlace } />
+              return <Pin key={ pageid } { ...place } thumb={ thumbnail.source } lat={ lat } lng={ lon } setPlace={ setPlace } />
             }
             else {
               return null;
