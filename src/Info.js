@@ -18,12 +18,12 @@ const Info = props => {
       <div className="App-info-container">
         <h1>Welcome!</h1>
         {
-          geo ? <p><strong>Location shared!</strong></p>
+          geo ? <p><button disabled>Location shared!</button></p>
               : <p><button onClick={ () => allowGeo(true) }>Share Location</button></p>
         }
-        <p>Once you’ve granted access to your location, when the app is open you can discover interesting landmarks around you.</p>
-        <p>Tap on a marker on the map and more information about it will show up in this space. Have fun!</p>
-        <p><strong>Note:</strong> Your location data is never stored in the app or on our servers!</p>
+        <p><strong>Click “Share Location”</strong> to discover interesting landmarks around you from Wikipedia.</p>
+        <p><strong>Tap on a marker</strong> on the map and more information about it will show up in this space. Have fun!</p>
+        <p><em>Note: Your location data is never stored in the app or on our servers!</em></p>
       </div>
     );
   }
