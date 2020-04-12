@@ -1,16 +1,12 @@
 import React from 'react';
 import { firstCap } from './lib/text';
 
-const style = {
-  padding: '0 1rem'
-};
-
 const Intro = props => {
   const { place, geo, allowGeo } = props;
   if (place) {
     const { title, description, thumb } = place;
     return (
-      <div style={ style }>
+      <div className="App-info-container">
         <p><strong>{ firstCap(title) }</strong></p>
         <img src={ thumb } alt={ firstCap(title) } />
         <p>{ firstCap(description) }</p>
@@ -19,7 +15,7 @@ const Intro = props => {
   }
   else {
     return (
-      <div style={ style }>
+      <div className="App-info-container">
         <h1>Welcome!</h1>
         {
           geo ? <p><strong>Location shared!</strong></p>

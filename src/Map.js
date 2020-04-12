@@ -5,19 +5,14 @@ import getNearby from './lib/getNearby';
 const Me = () => <i>•</i>;
 
 const Pin = ({ title, description, lat, lng, thumb, setPlace }) => {
-  const style = {
-    height: '100%',
-    objectFit: 'cover',
-    width: '100%'
-  };
   const place = {
     title,
     description,
     thumb
   };
   return (
-    <div onClick={ () => { setPlace(place) } } className="Map-pin" lat={ lat } lng={ lng }>
-      <img style={ style } src={ thumb } alt={ title } />
+    <div className="Map-pin" onClick={ evt => { setPlace(place) } } lat={ lat } lng={ lng }>
+      <img src={ thumb } alt={ title } />
     </div>
   );
 };
@@ -41,7 +36,7 @@ class Map extends Component {
   componentDidUpdate() {
     const { geo } = this.props;
 
-    let newNearbyPlaces = loc => {
+    const newNearbyPlaces = loc => {
       const { latitude, longitude } = loc.coords;
       const { map, maps } = this.state;
       if (map && maps) {
@@ -61,13 +56,27 @@ class Map extends Component {
       });
     };
     geo && navigator.geolocation.watchPosition(newNearbyPlaces)
-  }
+  };
+
+  renderPins(places) {
+    const { setPlace } = this.props;
+    const pins = places.map(place => {
+      const { pageid, coordinates, thumbnail } = place;
+      if (coordinates.length > 0) {
+        let { lat, lon } = coordinates[0];
+        return <Pin key={ pageid } { ...place } thumb={ thumbnail.source } lat={ lat } lng={ lon } setPlace={ setPlace } />
+      }
+      else {
+        return null;
+      }
+    });
+    return pins;
+  };
 
   render() {
-    let { places, center } = this.state;
-    let { setPlace } = this.props;
+    const { places, center } = this.state;
     return (
-      <div style={{ height: '100%', width: '100%' }}>
+      <div className="Map-container">
         <GoogleMapReact
             bootstrapURLKeys={{ key: 'AIzaSyDvSl4yqevaoY63RJwzf74Civuq4uCBWf0' }}
             defaultCenter={ defaultCenter }
@@ -77,16 +86,7 @@ class Map extends Component {
               this.setState({ map, maps });
             }}
           >
-          {places.map(place => {
-            const { pageid, coordinates, thumbnail } = place;
-            if (coordinates.length > 0) {
-              let { lat, lon } = coordinates[0];
-              return <Pin key={ pageid } { ...place } thumb={ thumbnail.source } lat={ lat } lng={ lon } setPlace={ setPlace } />
-            }
-            else {
-              return null;
-            }
-          })}
+          { this.renderPins(places) }
           <Me lat={ center.lat } lng={ center.lng } />
         </GoogleMapReact>
       </div>
