@@ -17,20 +17,27 @@ const Pin = ({ title, description, lat, lng, thumb, setPlace }) => {
   );
 };
 
-const defaultCenter = { // the kennedy school
-  lat: 45.564455,
-  lng: -122.630576
-};
-
-const defaultZoom = 14;
-
 class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      center: defaultCenter,
+      center: this.defaultCenter,
       places: []
     };
+  }
+
+  defaultCenter = { // the kennedy school
+    lat: 45.564455,
+    lng: -122.630576
+  };
+
+  defaultZoom = 14;
+
+  geoError(err) {
+    // only log warnings in development
+    if (location.hostname !== 'whats-near.me') {
+      console.warn('ERROR(' + err.code + '): ' + err.message)
+    }
   }
 
   componentDidUpdate() {
@@ -55,7 +62,7 @@ class Map extends Component {
         });
       });
     };
-    geo && navigator.geolocation.watchPosition(newNearbyPlaces)
+    geo && navigator.geolocation.watchPosition(newNearbyPlaces, this.geoError)
   };
 
   renderPins(places) {
@@ -79,8 +86,8 @@ class Map extends Component {
       <div className="Map-container">
         <GoogleMapReact
             bootstrapURLKeys={{ key: 'AIzaSyDvSl4yqevaoY63RJwzf74Civuq4uCBWf0' }}
-            defaultCenter={ defaultCenter }
-            defaultZoom={ defaultZoom }
+            defaultCenter={ this.defaultCenter }
+            defaultZoom={ this.defaultZoom }
             yesIWantToUseGoogleMapApiInternals
             onGoogleApiLoaded={({ map, maps }) => {
               this.setState({ map, maps });

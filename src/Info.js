@@ -25,7 +25,7 @@ const Info = props => {
         }
         <p><strong>Click “Share Location”</strong> to discover interesting landmarks around you from Wikipedia.</p>
         <p><strong>Tap on a marker</strong> on the map and more information about it will show up in this space. Have fun!</p>
-        <p><em>Note: Your location data is never stored in the app or on our servers!</em></p>
+        <p><em>Note: Your location is never stored in the app or on our servers!</em></p>
       </div>
     );
   }
