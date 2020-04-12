@@ -5,11 +5,13 @@ const Info = props => {
   const { place, geo, allowGeo } = props;
   if (place) {
     const { title, description, thumb } = place;
+    const wikiLink = `https://www.wikipedia.org/search-redirect.php?search=${title}&family=wikipedia&hiddenLanguageInput=en`;
     return (
       <div className="App-info-container">
         <p><strong>{ firstCap(title) }</strong></p>
         <img src={ thumb } alt={ firstCap(title) } />
         <p>{ firstCap(description) }</p>
+        <p><a target="_blank" rel="noopener noreferrer" href={ wikiLink }>See more about this spot on Wikipedia</a></p>
       </div>
     );
   }
