@@ -35,7 +35,7 @@ class Map extends Component {
 
   geoError(err) {
     // only log warnings in development
-    if (location.hostname !== 'whats-near.me') {
+    if (window.location.hostname !== 'whats-near.me') {
       console.warn('ERROR(' + err.code + '): ' + err.message)
     }
   }
