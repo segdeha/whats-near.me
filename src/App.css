@@ -4,7 +4,7 @@
 
 .App-header {
   align-items: center;
-  background-color: #282c34;
+  background-color: #1b1f23;
   color: white;
   display: flex;
   flex-direction: column;
@@ -13,6 +13,22 @@
   height: 5vh;
   justify-content: center;
 }
+  .App-header a {
+    height: 3vh;
+    position: absolute;
+    top: 1vh;
+    width: 3vh;
+  }
+  .App-header .ahn {
+    left: 1vh;
+  }
+  .App-header .github {
+    right: 1vh;
+  }
+  .App-header img {
+    height: 100%;
+    width: 100%;
+  }
 
 .App-link {
   color: #61dafb;
