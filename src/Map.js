@@ -57,6 +57,7 @@ class Map extends Component {
     const { map, maps } = this.state;
     const { setPlaces } = this.props;
     if (map && maps) {
+      map.addListener('click', evt => { evt.stop() });
       map.panTo(new maps.LatLng(latitude, longitude));
       this.setState({
         center: {
