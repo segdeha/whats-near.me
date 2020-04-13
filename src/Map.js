@@ -12,7 +12,11 @@ const Pin = ({ title, description, lat, lng, thumb, setPlace }) => {
     thumb
   };
   return (
-    <div className="Map-pin" onClick={ evt => { setPlace(place) } } lat={ lat } lng={ lng }>
+    <div className="Map-pin"
+         onClick={ evt => { setPlace(place) } }
+         lat={ lat }
+         lng={ lng }
+    >
       <img src={ thumb } alt={ title } />
     </div>
   );
@@ -23,7 +27,6 @@ class Map extends Component {
     super(props);
     this.state = {
       center: this.defaultCenter,
-      places: [],
       lastFetch: 0, // only fetch places once per minute max
       timer: null,  // for setTimeout calls for new place fetches
       watcher: null // for geolocation.watchPosition ID
@@ -52,7 +55,9 @@ class Map extends Component {
   newNearbyPlaces(loc) {
     const { latitude, longitude } = loc.coords;
     const { map, maps } = this.state;
+    const { setPlaces } = this.props;
     if (map && maps) {
+      map.addListener('click', evt => { evt.stop() });
       map.panTo(new maps.LatLng(latitude, longitude));
       this.setState({
         center: {
@@ -64,9 +69,7 @@ class Map extends Component {
     let places = getNearby(latitude, longitude);
     places.then(json => {
       this.unwatch();
-      this.setState({
-        places: json.query.pages
-      });
+      setPlaces(json.query.pages);
     });
   }
 
@@ -101,7 +104,15 @@ class Map extends Component {
       const { pageid, coordinates, thumbnail } = place;
       if (coordinates.length > 0) {
         let { lat, lon } = coordinates[0];
-        return <Pin key={ pageid } { ...place } thumb={ thumbnail.source } lat={ lat } lng={ lon } setPlace={ setPlace } />
+        return (
+          <Pin key={ pageid }
+               thumb={ thumbnail.source }
+               lat={ lat }
+               lng={ lon }
+               setPlace={ setPlace }
+               { ...place }
+          />
+        );
       }
       else {
         return null;
@@ -111,7 +122,8 @@ class Map extends Component {
   };
 
   render() {
-    const { places, center } = this.state;
+    const { center } = this.state;
+    const { places } = this.props;
     return (
       <div className="Map-container">
         <GoogleMapReact

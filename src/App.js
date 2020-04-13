@@ -5,6 +5,7 @@ import './App.css';
 
 const App = () => {
   const [place, setPlace] = useState(null);
+  const [places, setPlaces] = useState([]);
   const [geo, allowGeo] = useState(null);
 
   return (
@@ -13,10 +14,17 @@ const App = () => {
         What’s near me?
       </header>
       <main className="App-map">
-        <Map geo={ geo } setPlace={ setPlace } />
+        <Map geo={ geo }
+             places={ places }
+             setPlace={ setPlace }
+             setPlaces={ setPlaces }
+        />
       </main>
       <footer className="App-info">
-        <Info geo={ geo } allowGeo={ allowGeo } place={ place } />
+        <Info geo={ geo }
+              place={ place }
+              allowGeo={ allowGeo }
+        />
       </footer>
     </div>
   );
