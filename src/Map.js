@@ -102,11 +102,15 @@ class Map extends Component {
     const { setPlace } = this.props;
     const pins = places.map(place => {
       const { pageid, coordinates, thumbnail } = place;
+      let thumb;
+      if (thumbnail && thumbnail.source) {
+        thumb = thumbnail.source;
+      }
       if (coordinates.length > 0) {
         let { lat, lon } = coordinates[0];
         return (
           <Pin key={ pageid }
-               thumb={ thumbnail.source }
+               thumb={ thumb }
                lat={ lat }
                lng={ lon }
                setPlace={ setPlace }
