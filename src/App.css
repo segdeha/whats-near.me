@@ -35,7 +35,7 @@
 }
 
 .App-map {
-  box-shadow: rgba(0;0;0;0.5) 0 2px 6px;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 2px 6px;
   height: 55%;
   left: 0;
   position: absolute;
@@ -53,7 +53,7 @@
   background: gray;
   border: solid 1px black;
   border-radius: 4px;
-  box-shadow: rgba(0;0;0;0.5) 0 2px 6px;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 2px 6px;
   height: 10vw;
   left: 50%;
   overflow: hidden;
