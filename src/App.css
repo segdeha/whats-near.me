@@ -87,8 +87,11 @@
 }
 
 .App-info-container {
-  padding: 0 1rem;
+  padding: 0 1rem 1rem;
 }
+  .App-info-container article {
+    text-align: left;
+  }
 
 i {
   animation: me 2s infinite;
