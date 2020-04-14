@@ -13,7 +13,11 @@
   height: 5vh;
   justify-content: center;
 }
-  .App-header a {
+  .App-header .app-name {
+    color: white;
+    text-decoration: none;
+  }
+  .App-header .ahn, .App-header .github {
     height: 3vh;
     position: absolute;
     top: 1vh;

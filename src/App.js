@@ -14,10 +14,12 @@ const App = () => {
         <a className="ahn" target="_blank" rel="noopener noreferrer" href="https://andrew.hedges.name">
           <img src="/triskelion.png" alt="Built by Andrew Hedges" />
         </a>
+        <a className="app-name" href="/">
+          What’s near me?
+        </a>
         <a className="github" target="_blank" rel="noopener noreferrer" href="https://github.com/segdeha/whats-near.me">
           <img src="/octocat.png" alt="See this project on GitHub" />
         </a>
-        What’s near me?
       </header>
       <main className="App-map">
         <Map geo={ geo }
