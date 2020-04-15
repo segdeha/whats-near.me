@@ -13,6 +13,7 @@ const Details = props => {
     window.requestAnimationFrame(() => {
       if (el.open) {
         setIsVideoPlaying(true);
+        vid.scrollIntoView({ behavior: 'smooth', block: 'start' });
         timer = setTimeout(() => {
           vid.play();
         }, 2000);
