@@ -1,8 +1,10 @@
 import React from 'react';
+import Details from './Details.js';
+
 import { firstCap } from './lib/text';
 
 const Info = props => {
-  const { place, geo, allowGeo } = props;
+  const { place, geo, allowGeo, setIsVideoPlaying } = props;
   if (place) {
     const { title, description, thumb } = place;
     const wikiLink = `https://www.wikipedia.org/search-redirect.php?search=${title}&family=wikipedia&hiddenLanguageInput=en`;
@@ -29,18 +31,8 @@ const Info = props => {
           <p><strong>Tap on a marker</strong> on the map and more information about it will show up in this space. Have fun!</p>
           <p><em>Note: Your location is never stored in the app or on our servers!</em></p>
           <p><strong>What’s near me?</strong> looks and works best when installed on your phone as an app.</p>
-          <details>
-            <summary>How to: iOS</summary>
-            <ol>
-              <li>In Safari, tap the share icon at the bottom middle of the window.</li>
-            </ol>
-          </details>
-          <details>
-            <summary>How to: Android</summary>
-            <ol>
-              <li>In Chrome, tap the three dots at the top right of the window.</li>
-            </ol>
-          </details>
+          <Details platform="ios" setIsVideoPlaying={ setIsVideoPlaying } />
+          <Details platform="android" setIsVideoPlaying={ setIsVideoPlaying } />
         </article>
       </div>
     );
