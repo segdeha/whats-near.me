@@ -1,6 +1,13 @@
 .App {
   text-align: center;
 }
+  .App.expanded {}
+    .App.expanded .App-map {
+      height: 20%;
+    }
+    .App.expanded .App-info {
+      height: 75%;
+    }
 
 .App-header {
   align-items: center;
@@ -45,6 +52,7 @@
   position: absolute;
   right: 0;
   top: 5vh;
+  transition: height 0.5s;
   z-index: 100;
 }
 
@@ -84,10 +92,21 @@
   overflow: scroll;
   position: absolute;
   right: 0;
+  transition: height 0.5s;
 }
 
 .App-info-container {
-  padding: 0 1rem;
+  padding: 0 1rem 1rem;
+}
+  .App-info-container article {
+    text-align: left;
+  }
+
+.App-info-how-to {
+  display: block;
+  height: 60vh;
+  margin: auto;
+  width: auto;
 }
 
 i {
