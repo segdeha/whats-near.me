@@ -36,7 +36,7 @@ class Map extends Component {
     this.watch = this.watch.bind(this);
   }
 
-  interval = isDev() ? 1000 * 20 : 1000 * 60; // refetch more often in development
+  interval = isDev() ? 1000 * 10 : 1000 * 30; // refetch more often in development
 
   defaultCenter = { // the kennedy school
     lat: 45.564455,
