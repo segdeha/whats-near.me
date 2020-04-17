@@ -123,3 +123,21 @@ i {
   50%  { opacity: 0.67; }
   100% { opacity: 0.33; }
 }
+
+@media screen and (orientation: landscape) {
+  .App-header {
+    font-size: 16px;
+  }
+  .App-info {
+    left: 20%;
+    right: 20%;
+  }
+  i {
+    max-height: 16px;
+    max-width: 16px;
+  }
+  .Map-pin {
+    max-height: 32px;
+    max-width: 32px;
+  }
+}
