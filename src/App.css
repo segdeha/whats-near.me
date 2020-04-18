@@ -103,6 +103,9 @@
   .App-info-container article {
     text-align: left;
   }
+  .App-info-container details {
+    margin: 1rem 0;
+  }
   .App-info-container img {
     max-width: 100%;
   }
