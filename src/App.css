@@ -20,21 +20,25 @@
   height: 5vh;
   justify-content: center;
 }
-  .App-header .app-name {
-    color: white;
+  .App-header a {
     text-decoration: none;
   }
-  .App-header .ahn, .App-header .github {
+  .App-header .app-name {
+    color: white;
+    line-height: 2vh;
+  }
+  .App-header .center-on-me, .App-header .settings {
     height: 3vh;
     position: absolute;
     top: 1vh;
     width: 3vh;
   }
-  .App-header .ahn {
-    left: 1vh;
+  .App-header .center-on-me {
+    left: 1.5vh;
+    line-height: 3vh;
   }
-  .App-header .github {
-    right: 1vh;
+  .App-header .settings {
+    right: 1.5vh;
   }
   .App-header img {
     height: 100%;
@@ -117,7 +121,7 @@
   width: auto;
 }
 
-i {
+.me {
   animation: me 1.25s infinite;
   display: block;
   font-style: normal;

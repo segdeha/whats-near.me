@@ -3,7 +3,7 @@ import GoogleMapReact from 'google-map-react';
 import getNearby from './lib/getNearby';
 import isDev from './lib/isDev';
 
-const Me = () => <i>🔵</i>;
+const Me = () => <span className="me" role="img" aria-label="My location">🔵</span>;
 
 const Pin = ({ title, description, lat, lng, thumb, setPlace }) => {
   const place = {

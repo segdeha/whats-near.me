@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import Map from './Map';
+import { Link, Route } from 'react-router-dom';
+
 import Info from './Info';
+import Map from './Map';
+import Settings from './Settings';
+
 import './App.css';
 
 const App = () => {
@@ -12,22 +16,25 @@ const App = () => {
   const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
 
   const handleTitleClick = evt => {
-    evt.preventDefault();
     setPlace(null);
+  };
+
+  const handleCenterClick = evt => {
+    evt.preventDefault();
   };
 
   return (
     <div className={ `App ${videoIsPlaying}` }>
       <header className="App-header">
-        <a className="ahn" target="_blank" rel="noopener noreferrer" href="https://andrew.hedges.name">
-          <img src="/triskelion.png" alt="Built by Andrew Hedges" />
-        </a>
-        <a className="app-name" href="/" onClick={ handleTitleClick }>
+        <Link className="center-on-me" to="/" onClick={ handleCenterClick }>
+          <span role="img" aria-label="Center on me">🎯</span>
+        </Link>
+        <Link className="app-name" to="/" onClick={ handleTitleClick }>
           What’s near me?
-        </a>
-        <a className="github" target="_blank" rel="noopener noreferrer" href="https://github.com/segdeha/whats-near.me">
-          <img src="/octocat.png" alt="See this project on GitHub" />
-        </a>
+        </Link>
+        <Link className="settings" to="/settings">
+          <span role="img" aria-label="Open settings panel">⚙︎</span>
+        </Link>
       </header>
       <main className="App-map">
         <Map geo={ geo }
@@ -43,6 +50,9 @@ const App = () => {
               setIsVideoPlaying={ setIsVideoPlaying }
         />
       </footer>
+      <Route path="/settings">
+        <Settings />
+      </Route>
     </div>
   );
 }
