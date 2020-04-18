@@ -11,7 +11,7 @@
 
 .App-header {
   align-items: center;
-  background-color: #1b1f23;
+  background-color: #2e355e;
   color: white;
   display: flex;
   flex-direction: column;
@@ -34,9 +34,16 @@
     width: 3vh;
   }
   .App-header .center-on-me {
+    filter: grayscale(1);
     left: 1.5vh;
+    opacity: 0.5;
     line-height: 3vh;
+    transition: all 0.5s;
   }
+    .App-header .center-on-me.active {
+      filter: none;
+      opacity: 1;
+    }
   .App-header .settings {
     right: 1.5vh;
   }
