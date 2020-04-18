@@ -121,6 +121,37 @@
   width: auto;
 }
 
+.modal {
+  background: rgba(0,0,0,0.5);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
+  .modal .content {
+    background: white;
+    border-radius: 1rem;
+    bottom: 3vh;
+    box-shadow: rgba(0, 0, 0, 0.5) 0 2px 6px;
+    left: 3vh;
+    padding: 1rem;
+    position: absolute;
+    right: 3vh;
+    text-align: left;
+    top: 3vh;
+  }
+  .modal .close-x {
+    position: absolute;
+    right: 1vh;
+    top: 1vh;
+  }
+    .modal .close-x img {
+      height: 32px;
+      width: 32px;
+    }
+
 .me {
   animation: me 1.25s infinite;
   display: block;
