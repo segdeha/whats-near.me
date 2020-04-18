@@ -101,6 +101,9 @@
   .App-info-container article {
     text-align: left;
   }
+  .App-info-container img {
+    max-width: 100%;
+  }
 
 .App-info-how-to {
   display: block;
