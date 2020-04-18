@@ -118,10 +118,9 @@
 }
 
 i {
-  animation: me 2s infinite;
-  background-color: rgba(0, 0, 128, 1);
-  border-radius: 2vw;
+  animation: me 1.25s infinite;
   display: block;
+  font-style: normal;
   height: 4vw;
   max-height: 24px;
   max-width: 24px;
@@ -129,9 +128,9 @@ i {
 }
 
 @keyframes me {
-  0%   { opacity: 0.33; }
-  50%  { opacity: 0.67; }
-  100% { opacity: 0.33; }
+  0%   { opacity: 1.00; }
+  50%  { opacity: 0.25; }
+  100% { opacity: 1.00; }
 }
 
 @media screen and (orientation: landscape) {
