@@ -6,6 +6,9 @@ const Pin = ({ title, description, lat, lng, thumb, setPlace }) => {
     description,
     thumb
   };
+  if (!thumb) {
+    thumb = '/img/default-thumb.png';
+  }
   return (
     <div className="Map-pin"
          onClick={ evt => { setPlace(place) } }

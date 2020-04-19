@@ -62,12 +62,10 @@ class Map extends Component {
         map.addListener('dragstart', evt => { setUserHasPanned(true) });
         map.addListener('dragend', () => {
           const latLng = map.getCenter();
-          const lat = latLng.lat();
-          const lng = latLng.lng();
           this.setState({
             mapCenter: {
-              lat,
-              lng
+              lat: latLng.lat(),
+              lng: latLng.lng()
             }
           });
           this.newNearbyPlaces();
