@@ -8,10 +8,12 @@ import Settings from './Settings';
 import './App.css';
 
 const App = () => {
+  const [geo, allowGeo] = useState(null);
+  const [isFirstFetch, setIsFirstFetch] = useState(true);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [place, setPlace] = useState(null);
   const [places, setPlaces] = useState([]);
-  const [geo, allowGeo] = useState(null);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [userHasPanned, setUserHasPanned] = useState(false);
 
   const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
 
@@ -21,26 +23,35 @@ const App = () => {
 
   const handleCenterClick = evt => {
     evt.preventDefault();
+    setUserHasPanned(false);
   };
+
+  const centerOnMeClasses = userHasPanned ?
+      'center-on-me active'
+    : 'center-on-me';
 
   return (
     <div className={ `App ${videoIsPlaying}` }>
       <header className="App-header">
-        <Link className="center-on-me" to="/" onClick={ handleCenterClick }>
-          <span role="img" aria-label="Center on me">🎯</span>
+        <Link className={ centerOnMeClasses } to="/" onClick={ handleCenterClick }>
+          <img src="/img/center-on-me.png" alt="Center on me" />
         </Link>
         <Link className="app-name" to="/" onClick={ handleTitleClick }>
           What’s near me?
         </Link>
         <Link className="settings" to="/settings">
-          <span role="img" aria-label="Open settings panel">⚙︎</span>
+          <img src="/img/settings.png" alt="Open settings panel" />
         </Link>
       </header>
       <main className="App-map">
         <Map geo={ geo }
+             isFirstFetch={ isFirstFetch }
              places={ places }
+             setIsFirstFetch={ setIsFirstFetch }
              setPlace={ setPlace }
              setPlaces={ setPlaces }
+             setUserHasPanned={ setUserHasPanned }
+             userHasPanned={ userHasPanned }
         />
       </main>
       <footer className="App-info">
