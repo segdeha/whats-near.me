@@ -34,13 +34,13 @@ const App = () => {
     <div className={ `App ${videoIsPlaying}` }>
       <header className="App-header">
         <Link className={ centerOnMeClasses } to="/" onClick={ handleCenterClick }>
-          <span role="img" aria-label="Center on me">🎯</span>
+          <img src="/img/center-on-me.png" alt="Center on me" />
         </Link>
         <Link className="app-name" to="/" onClick={ handleTitleClick }>
           What’s near me?
         </Link>
         <Link className="settings" to="/settings">
-          <span role="img" aria-label="Open settings panel">⚙︎</span>
+          <img src="/img/settings.png" alt="Open settings panel" />
         </Link>
       </header>
       <main className="App-map">
