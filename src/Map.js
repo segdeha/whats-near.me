@@ -4,6 +4,7 @@ import GoogleMapReact from 'google-map-react';
 import getNearby from './lib/getNearby';
 import isDev from './lib/isDev';
 
+import MapCenter from './MapCenter';
 import Me from './Me';
 import Pin from './Pin';
 
@@ -20,8 +21,6 @@ class Map extends Component {
     this.newNearbyPlaces = this.newNearbyPlaces.bind(this);
     this.panToCenter = this.panToCenter.bind(this);
   }
-
-  interval = isDev() ? 1000 * 10 : 1000 * 30; // refetch more often in development
 
   defaultCenter = { // the kennedy school
     lat: 45.564455,
@@ -150,7 +149,10 @@ class Map extends Component {
 
   render() {
     const { myCenter } = this.state;
-    const { places } = this.props;
+    const { places, userHasPanned } = this.props;
+    const mapCenterClassnames = userHasPanned ?
+            'map-center active'
+          : 'map-center';
     return (
       <div className="Map-container">
         <GoogleMapReact
@@ -165,6 +167,7 @@ class Map extends Component {
           { this.renderPins(places) }
           <Me lat={ myCenter.lat } lng={ myCenter.lng } />
         </GoogleMapReact>
+        <MapCenter classNames={ mapCenterClassnames } />
       </div>
     );
   }

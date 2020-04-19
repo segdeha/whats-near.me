@@ -164,10 +164,32 @@
   display: block;
   font-style: normal;
   height: 4vw;
+  left: 50%;
   max-height: 24px;
   max-width: 24px;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  user-select: none;
   width: 4vw;
+  z-index: 10;
 }
+
+.map-center {
+  height: 24px;
+  left: 50%;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.5s;
+  user-select: none;
+  width: 24px;
+  z-index: 1;
+}
+  .map-center.active {
+    opacity: 1;
+  }
 
 @keyframes me {
   0%   { opacity: 1.00; }
