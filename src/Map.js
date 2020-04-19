@@ -1,39 +1,24 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
+
 import getNearby from './lib/getNearby';
 import isDev from './lib/isDev';
 
-const Me = () => <span className="me" role="img" aria-label="My location">🔵</span>;
-
-const Pin = ({ title, description, lat, lng, thumb, setPlace }) => {
-  const place = {
-    title,
-    description,
-    thumb
-  };
-  return (
-    <div className="Map-pin"
-         onClick={ evt => { setPlace(place) } }
-         lat={ lat }
-         lng={ lng }
-    >
-      <img src={ thumb } alt={ title } />
-    </div>
-  );
-};
+import Me from './Me';
+import Pin from './Pin';
 
 class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      center: this.defaultCenter,
-      lastFetch: 0, // only fetch places once per minute max
-      timer: null,  // for setTimeout calls for new place fetches
-      watcher: null // for geolocation.watchPosition ID
+      myCenter: this.defaultCenter,
+      mapCenter: this.defaultCenter,
+      fetching: false // set to true when a fetch is in progress
     };
     this.logError = this.logError.bind(this);
+    this.newCenter = this.newCenter.bind(this);
     this.newNearbyPlaces = this.newNearbyPlaces.bind(this);
-    this.watch = this.watch.bind(this);
+    this.panToCenter = this.panToCenter.bind(this);
   }
 
   interval = isDev() ? 1000 * 10 : 1000 * 30; // refetch more often in development
@@ -52,50 +37,90 @@ class Map extends Component {
     }
   }
 
-  newNearbyPlaces(loc) {
+  // coming from navigator.geolocation.watchPosition
+  newCenter(loc) {
     const { latitude, longitude } = loc.coords;
     const { map, maps } = this.state;
-    const { setPlaces } = this.props;
-    if (map && maps) {
-      map.addListener('click', evt => { evt.stop() });
-      map.panTo(new maps.LatLng(latitude, longitude));
+    const { isFirstFetch, setIsFirstFetch, setUserHasPanned, userHasPanned } = this.props;
+    this.setState({
+      myCenter: {
+        lat: latitude,
+        lng: longitude
+      }
+    });
+    if (!userHasPanned) {
       this.setState({
-        center: {
+        mapCenter: {
           lat: latitude,
           lng: longitude
         }
       });
     }
-    let places = getNearby(latitude, longitude);
-    places.then(json => {
-      this.unwatch();
-      setPlaces(json.query.pages);
-    });
+    if (map && maps) {
+      if (isFirstFetch) {
+        map.addListener('click', evt => { evt.stop() });
+        map.addListener('dragstart', evt => { setUserHasPanned(true) });
+        map.addListener('dragend', () => {
+          const latLng = map.getCenter();
+          const lat = latLng.lat();
+          const lng = latLng.lng();
+          this.setState({
+            mapCenter: {
+              lat,
+              lng
+            }
+          });
+          this.newNearbyPlaces();
+        });
+        setIsFirstFetch(false);
+      }
+      else {
+        if (!userHasPanned) {
+          this.newNearbyPlaces();
+        }
+        this.panToCenter();
+      }
+    }
   }
 
-  watch() {
-    const { lastFetch } = this.state;
-    const interval = this.interval;
-    const now = Date.now();
-    if (lastFetch + interval < now) {
-      this.setState({
-        lastFetch: now,
-        timer: setTimeout(this.watch, interval),
-        watcher: navigator.geolocation.watchPosition(this.newNearbyPlaces, this.logError)
+  newNearbyPlaces() {
+    const { mapCenter } = this.state;
+    const { geo, setPlaces } = this.props;
+    if (geo) {
+      let places = getNearby(mapCenter.lat, mapCenter.lng);
+      places.then(json => {
+        setPlaces(json.query.pages);
       });
     }
   }
 
-  unwatch() {
-    const { watcher } = this.state;
-    navigator.geolocation.clearWatch(watcher);
+  panToCenter() {
+    const { myCenter, map, maps } = this.state;
+    const { userHasPanned } = this.props;
+    if (map && maps && !userHasPanned) {
+      map.panTo(new maps.LatLng(myCenter.lat, myCenter.lng));
+      this.newNearbyPlaces();
+    }
   }
+
+  // watch() {
+  //   const { lastFetch } = this.state;
+  //   const interval = this.interval;
+  //   const now = Date.now();
+  //   if (lastFetch + interval < now) {
+  //     this.setState({
+  //       lastFetch: now,
+  //       timer: setTimeout(this.watch, interval)
+  //     });
+  //   }
+  // }
 
   componentDidUpdate() {
     const { geo } = this.props;
     if (geo) {
-      this.watch();
+      navigator.geolocation.watchPosition(this.newCenter, this.logError);
     }
+    this.panToCenter();
   };
 
   renderPins(places) {
@@ -126,7 +151,7 @@ class Map extends Component {
   };
 
   render() {
-    const { center } = this.state;
+    const { myCenter } = this.state;
     const { places } = this.props;
     return (
       <div className="Map-container">
@@ -140,7 +165,7 @@ class Map extends Component {
             }}
           >
           { this.renderPins(places) }
-          <Me lat={ center.lat } lng={ center.lng } />
+          <Me lat={ myCenter.lat } lng={ myCenter.lng } />
         </GoogleMapReact>
       </div>
     );
