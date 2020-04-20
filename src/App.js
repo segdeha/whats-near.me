@@ -8,14 +8,19 @@ import Settings from './Settings';
 import './App.css';
 
 const App = () => {
+  const [apiLoaded, setApiLoaded] = useState(false);
   const [geo, allowGeo] = useState(null);
   const [isFirstFetch, setIsFirstFetch] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [place, setPlace] = useState(null);
   const [places, setPlaces] = useState([]);
-  const [userHasPanned, setUserHasPanned] = useState(false);
+  const [userHasPanned, setUserHasPanned] = useState(true);
 
   const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
+
+  const handleApiLoaded = () => {
+    setApiLoaded(true);
+  };
 
   const handleTitleClick = evt => {
     setPlace(null);
@@ -23,10 +28,12 @@ const App = () => {
 
   const handleCenterClick = evt => {
     evt.preventDefault();
-    setUserHasPanned(false);
+    if (geo) {
+      setUserHasPanned(false);
+    }
   };
 
-  const centerOnMeClasses = userHasPanned ?
+  const centerOnMeClasses = geo && userHasPanned ?
       'center-on-me active'
     : 'center-on-me';
 
@@ -44,8 +51,10 @@ const App = () => {
         </Link>
       </header>
       <main className="App-map">
-        <Map geo={ geo }
+        <Map apiLoaded={ apiLoaded }
+             geo={ geo }
              isFirstFetch={ isFirstFetch }
+             handleApiLoaded={ handleApiLoaded }
              places={ places }
              setIsFirstFetch={ setIsFirstFetch }
              setPlace={ setPlace }

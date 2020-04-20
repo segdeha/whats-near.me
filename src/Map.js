@@ -14,12 +14,16 @@ class Map extends Component {
     this.state = {
       myCenter: this.defaultCenter,
       mapCenter: this.defaultCenter,
-      fetching: false // set to true when a fetch is in progress
+      fetching: false, // set to true when a fetch is in progress
+      watcher: null // for navigator.geolocation.watchPosition
     };
     this.logError = this.logError.bind(this);
+    this.makeFirstFetch = this.makeFirstFetch.bind(this);
     this.newCenter = this.newCenter.bind(this);
     this.newNearbyPlaces = this.newNearbyPlaces.bind(this);
     this.panToCenter = this.panToCenter.bind(this);
+    this.unwatch = this.unwatch.bind(this);
+    this.watch = this.watch.bind(this);
   }
 
   defaultCenter = { // the kennedy school
@@ -40,7 +44,7 @@ class Map extends Component {
   newCenter(loc) {
     const { latitude, longitude } = loc.coords;
     const { map, maps } = this.state;
-    const { isFirstFetch, setIsFirstFetch, setUserHasPanned, userHasPanned } = this.props;
+    const { isFirstFetch, userHasPanned } = this.props;
     this.setState({
       myCenter: {
         lat: latitude,
@@ -57,19 +61,7 @@ class Map extends Component {
     }
     if (map && maps) {
       if (isFirstFetch) {
-        map.addListener('click', evt => { evt.stop() });
-        map.addListener('dragstart', evt => { setUserHasPanned(true) });
-        map.addListener('dragend', () => {
-          const latLng = map.getCenter();
-          this.setState({
-            mapCenter: {
-              lat: latLng.lat(),
-              lng: latLng.lng()
-            }
-          });
-          this.newNearbyPlaces();
-        });
-        setIsFirstFetch(false);
+        this.makeFirstFetch();
       }
       else {
         if (!userHasPanned) {
@@ -80,15 +72,35 @@ class Map extends Component {
     }
   }
 
+  makeFirstFetch() {
+    const { map } = this.state;
+    const { setIsFirstFetch, setUserHasPanned } = this.props;
+    map.addListener('click', evt => { evt.stop() });
+    map.addListener('dragstart', evt => {
+      this.unwatch();
+      setUserHasPanned(true);
+    });
+    map.addListener('dragend', () => {
+      const latLng = map.getCenter();
+      this.setState({
+        mapCenter: {
+          lat: latLng.lat(),
+          lng: latLng.lng()
+        }
+      });
+      this.newNearbyPlaces();
+    });
+    this.newNearbyPlaces();
+    setIsFirstFetch(false);
+  }
+
   newNearbyPlaces() {
     const { mapCenter } = this.state;
-    const { geo, setPlaces } = this.props;
-    if (geo) {
-      let places = getNearby(mapCenter.lat, mapCenter.lng);
-      places.then(json => {
-        setPlaces(json.query.pages);
-      });
-    }
+    const { setPlaces } = this.props;
+    let places = getNearby(mapCenter.lat, mapCenter.lng);
+    places.then(json => {
+      setPlaces(json.query.pages);
+    });
   }
 
   panToCenter() {
@@ -112,11 +124,32 @@ class Map extends Component {
   //   }
   // }
 
+  watch() {
+    this.setState({
+      watcher: navigator.geolocation.watchPosition(this.newCenter, this.logError)
+    });
+  }
+
+  unwatch() {
+    let { watcher } = this.state;
+    navigator.geolocation.clearWatch(watcher);
+    this.setState({
+      watcher: null
+    });
+  }
+
   componentDidUpdate() {
-    const { geo } = this.props;
-    if (geo) {
-      navigator.geolocation.watchPosition(this.newCenter, this.logError);
+    const { map, maps, watcher } = this.state;
+    const { apiLoaded, geo, isFirstFetch, setUserHasPanned } = this.props;
+
+    if (apiLoaded && map && maps && isFirstFetch) {
+      this.makeFirstFetch();
     }
+    if (geo && !watcher) {
+      this.watch();
+      setUserHasPanned(false);
+    }
+    // this is here in case the user manually pans then hits the bullseye
     this.panToCenter();
   };
 
@@ -149,7 +182,7 @@ class Map extends Component {
 
   render() {
     const { myCenter } = this.state;
-    const { places, userHasPanned } = this.props;
+    const { geo, handleApiLoaded, places, userHasPanned } = this.props;
     const mapCenterClassnames = userHasPanned ?
             'map-center active'
           : 'map-center';
@@ -162,10 +195,11 @@ class Map extends Component {
             yesIWantToUseGoogleMapApiInternals
             onGoogleApiLoaded={({ map, maps }) => {
               this.setState({ map, maps });
+              handleApiLoaded();
             }}
           >
           { this.renderPins(places) }
-          <Me lat={ myCenter.lat } lng={ myCenter.lng } />
+          { geo && <Me lat={ myCenter.lat } lng={ myCenter.lng } /> }
         </GoogleMapReact>
         <MapCenter classNames={ mapCenterClassnames } />
       </div>
