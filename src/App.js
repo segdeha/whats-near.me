@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Route } from 'react-router-dom';
-import localforage from 'localforage';
-import { FETCH_DELAY } from './constants';
+import fetchDelayUtil from './lib/fetchDelayUtil';
 
 import Info from './Info';
 import Map from './Map';
@@ -10,26 +9,16 @@ import Settings from './Settings';
 import './App.css';
 
 const App = () => {
+  const delay = fetchDelayUtil.get();
+
   const [apiLoaded, setApiLoaded] = useState(false);
-  const [fetchDelay, setFetchDelay] = useState(15); // in seconds
+  const [fetchDelay, setFetchDelay] = useState(delay); // in seconds
   const [geo, allowGeo] = useState(null);
   const [isFirstFetch, setIsFirstFetch] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [place, setPlace] = useState(null);
   const [places, setPlaces] = useState([]);
   const [userHasPanned, setUserHasPanned] = useState(true);
-
-  // get fetchDelay value from localStorage, if one has been saved
-  localforage
-    .getItem(FETCH_DELAY)
-    .then(value => {
-      if (value && typeof value === 'number') {
-        setFetchDelay(value);
-      }
-    })
-  ;
-
-  const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
 
   const handleApiLoaded = () => {
     setApiLoaded(true);
@@ -45,6 +34,8 @@ const App = () => {
       setUserHasPanned(false);
     }
   };
+
+  const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
 
   const centerOnMeClasses = geo && userHasPanned ?
       'center-on-me active'

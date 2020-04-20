@@ -189,15 +189,15 @@ class Map extends Component {
     return (
       <div className="Map-container">
         <GoogleMapReact
-            bootstrapURLKeys={{ key: 'AIzaSyDvSl4yqevaoY63RJwzf74Civuq4uCBWf0' }}
-            defaultCenter={ this.defaultCenter }
-            defaultZoom={ this.defaultZoom }
-            yesIWantToUseGoogleMapApiInternals
-            onGoogleApiLoaded={({ map, maps }) => {
-              this.setState({ map, maps });
-              handleApiLoaded();
-            }}
-          >
+          bootstrapURLKeys={{ key: 'AIzaSyDvSl4yqevaoY63RJwzf74Civuq4uCBWf0' }}
+          defaultCenter={ this.defaultCenter }
+          defaultZoom={ this.defaultZoom }
+          yesIWantToUseGoogleMapApiInternals
+          onGoogleApiLoaded={({ map, maps }) => {
+            this.setState({ map, maps });
+            handleApiLoaded();
+          }}
+        >
           { this.renderPins(places) }
           { geo && <Me lat={ myCenter.lat } lng={ myCenter.lng } /> }
         </GoogleMapReact>

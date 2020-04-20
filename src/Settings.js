@@ -1,17 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import localforage from 'localforage';
 import ReactSlider from 'react-slider';
 import LinkToBlank from './LinkToBlank';
-import { FETCH_DELAY } from './constants';
+import fetchDelayUtil from './lib/fetchDelayUtil';
 
 const Settings = props => {
   const { fetchDelay, setFetchDelay } = props;
   const [min, max, step] = [0, 30, 5];
+
   const handleFetchDelayChange = value => {
     setFetchDelay(value);
-    localforage.setItem(FETCH_DELAY, value);
+    fetchDelayUtil.set(value);
   };
+
   return (
     <section className="modal">
       <article className="content">
@@ -26,7 +27,7 @@ const Settings = props => {
           className="slider-horizontal"
           thumbClassName="slider-thumb"
           trackClassName="slider-track"
-          defaultValue={ fetchDelay }
+          value={ fetchDelay }
           min={ min }
           max={ max }
           step={ step }
