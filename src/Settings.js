@@ -4,6 +4,7 @@ import ReactSlider from 'react-slider';
 import LinkToBlank from './LinkToBlank';
 
 const Settings = props => {
+  const { fetchDelay, setFetchDelay } = props;
   const [min, max, step] = [0, 30, 5];
   return (
     <section className="modal">
@@ -19,10 +20,12 @@ const Settings = props => {
           className="slider-horizontal"
           thumbClassName="slider-thumb"
           trackClassName="slider-track"
+          defaultValue={ fetchDelay }
           min={ min }
           max={ max }
           step={ step }
-          renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+          onChange={ setFetchDelay }
+          renderThumb={(props, state) => <div {...props}>{ fetchDelay }</div>}
         />
         <h2>About</h2>
         <p><strong>What’s near me?</strong> is the work of <LinkToBlank href="https://andrew.hedges.name" text="Andrew Hedges" />.</p>
