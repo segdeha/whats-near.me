@@ -14,13 +14,16 @@ class Map extends Component {
     this.state = {
       myCenter: this.defaultCenter,
       mapCenter: this.defaultCenter,
-      fetching: false // set to true when a fetch is in progress
+      fetching: false, // set to true when a fetch is in progress
+      watcher: null // for navigator.geolocation.watchPosition
     };
     this.logError = this.logError.bind(this);
     this.makeFirstFetch = this.makeFirstFetch.bind(this);
     this.newCenter = this.newCenter.bind(this);
     this.newNearbyPlaces = this.newNearbyPlaces.bind(this);
     this.panToCenter = this.panToCenter.bind(this);
+    this.unwatch = this.unwatch.bind(this);
+    this.watch = this.watch.bind(this);
   }
 
   defaultCenter = { // the kennedy school
@@ -73,7 +76,10 @@ class Map extends Component {
     const { map } = this.state;
     const { setIsFirstFetch, setUserHasPanned } = this.props;
     map.addListener('click', evt => { evt.stop() });
-    map.addListener('dragstart', evt => { setUserHasPanned(true) });
+    map.addListener('dragstart', evt => {
+      this.unwatch();
+      setUserHasPanned(true);
+    });
     map.addListener('dragend', () => {
       const latLng = map.getCenter();
       this.setState({
@@ -118,15 +124,29 @@ class Map extends Component {
   //   }
   // }
 
+  watch() {
+    this.setState({
+      watcher: navigator.geolocation.watchPosition(this.newCenter, this.logError)
+    });
+  }
+
+  unwatch() {
+    let { watcher } = this.state;
+    navigator.geolocation.clearWatch(watcher);
+    this.setState({
+      watcher: null
+    });
+  }
+
   componentDidUpdate() {
-    const { map, maps } = this.state;
+    const { map, maps, watcher } = this.state;
     const { apiLoaded, geo, isFirstFetch, setUserHasPanned } = this.props;
 
     if (apiLoaded && map && maps && isFirstFetch) {
       this.makeFirstFetch();
     }
-    if (geo) {
-      navigator.geolocation.watchPosition(this.newCenter, this.logError);
+    if (geo && !watcher) {
+      this.watch();
       setUserHasPanned(false);
     }
     // this is here in case the user manually pans then hits the bullseye
