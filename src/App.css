@@ -194,6 +194,7 @@
   line-height: 2rem;
   outline: none;
   text-align: center;
+  user-select: none;
   width: 2rem;
 }
 

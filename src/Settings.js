@@ -1,11 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import localforage from 'localforage';
 import ReactSlider from 'react-slider';
 import LinkToBlank from './LinkToBlank';
+import { FETCH_DELAY } from './constants';
 
 const Settings = props => {
   const { fetchDelay, setFetchDelay } = props;
   const [min, max, step] = [0, 30, 5];
+  const handleFetchDelayChange = value => {
+    setFetchDelay(value);
+    localforage.setItem(FETCH_DELAY, value);
+  };
   return (
     <section className="modal">
       <article className="content">
@@ -24,7 +30,7 @@ const Settings = props => {
           min={ min }
           max={ max }
           step={ step }
-          onChange={ setFetchDelay }
+          onChange={ handleFetchDelayChange }
           renderThumb={(props, state) => <div {...props}>{ fetchDelay }</div>}
         />
         <h2>About</h2>

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Route } from 'react-router-dom';
+import localforage from 'localforage';
+import { FETCH_DELAY } from './constants';
 
 import Info from './Info';
 import Map from './Map';
@@ -16,6 +18,16 @@ const App = () => {
   const [place, setPlace] = useState(null);
   const [places, setPlaces] = useState([]);
   const [userHasPanned, setUserHasPanned] = useState(true);
+
+  // get fetchDelay value from localStorage, if one has been saved
+  localforage
+    .getItem(FETCH_DELAY)
+    .then(value => {
+      if (value && typeof value === 'number') {
+        setFetchDelay(value);
+      }
+    })
+  ;
 
   const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
 
