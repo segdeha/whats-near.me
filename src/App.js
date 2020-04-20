@@ -9,6 +9,7 @@ import './App.css';
 
 const App = () => {
   const [apiLoaded, setApiLoaded] = useState(false);
+  const [fetchDelay, setFetchDelay] = useState(15); // in seconds
   const [geo, allowGeo] = useState(null);
   const [isFirstFetch, setIsFirstFetch] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
@@ -52,6 +53,7 @@ const App = () => {
       </header>
       <main className="App-map">
         <Map apiLoaded={ apiLoaded }
+             fetchDelay={ fetchDelay }
              geo={ geo }
              isFirstFetch={ isFirstFetch }
              handleApiLoaded={ handleApiLoaded }
@@ -71,7 +73,9 @@ const App = () => {
         />
       </footer>
       <Route path="/settings">
-        <Settings />
+        <Settings fetchDelay={ fetchDelay }
+                  setFetchDelay={ setFetchDelay }
+        />
       </Route>
     </div>
   );
