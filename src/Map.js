@@ -95,11 +95,20 @@ class Map extends Component {
   }
 
   newNearbyPlaces() {
+    if (this.fetching) {
+      return;
+    }
     const { mapCenter } = this.state;
     const { setPlaces } = this.props;
+    this.setState({
+      fetching: true
+    });
     let places = getNearby(mapCenter.lat, mapCenter.lng);
     places.then(json => {
       setPlaces(json.query.pages);
+      this.setState({
+        fetching: false
+      });
     });
   }
 
