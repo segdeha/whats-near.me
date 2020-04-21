@@ -287,10 +287,9 @@ console.log('☝️📅 componentDidUpdate')
     }
 
     // when the user grants location access, start watching for location changes
-    // FIXME this currently puts us in an infinite loop
     if (geo && !watcher && !localGeo) {
 
-console.log('😬😭 geo && !watcher && !localGeo')
+console.log('🌎🚫👀 geo && !watcher && !localGeo')
 
       this.setState({
         localGeo: true
@@ -305,9 +304,6 @@ console.log('🤔 localGeo && !watcher && !userHasPanned')
 
       this.watch();
     }
-
-    // this is here for if the user manually pans then hits the bullseye
-    // this.panToCenter();
   };
 
   renderPins(places) {

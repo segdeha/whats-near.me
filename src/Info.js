@@ -5,6 +5,14 @@ import { firstCap } from './lib/text';
 
 const Info = props => {
   const { place, geo, allowGeo, setIsVideoPlaying } = props;
+
+  const handleClick = () => {
+
+console.log('👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎')
+
+    allowGeo(true);
+  };
+
   if (place) {
     let { title, description, thumb } = place;
     const wikiLink = `https://www.wikipedia.org/search-redirect.php?search=${title}&family=wikipedia&hiddenLanguageInput=en`;
@@ -23,7 +31,7 @@ const Info = props => {
         <h1>
           {
             geo ? <button disabled>Location shared!</button>
-                : <button onClick={ () => allowGeo(true) }>Share Location</button>
+                : <button onClick={ handleClick }>Share Location</button>
           }
         </h1>
         <article>
