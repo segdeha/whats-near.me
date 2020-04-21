@@ -15,6 +15,7 @@ const App = () => {
   const [fetchDelay, setFetchDelay] = useState(delay); // in seconds
   const [geo, allowGeo] = useState(null);
   const [isFirstFetch, setIsFirstFetch] = useState(true);
+  const [lastFetch, setLastFetch] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [place, setPlace] = useState(null);
   const [places, setPlaces] = useState([]);
@@ -26,9 +27,8 @@ const App = () => {
 
   const handleCenterClick = evt => {
     evt.preventDefault();
-    if (geo) {
-      setUserHasPanned(false);
-    }
+    setUserHasPanned(false);
+    setLastFetch(0);
   };
 
   const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
@@ -55,9 +55,11 @@ const App = () => {
              fetchDelay={ fetchDelay }
              geo={ geo }
              isFirstFetch={ isFirstFetch }
+             lastFetch={ lastFetch }
              setApiLoaded={ setApiLoaded }
              places={ places }
              setIsFirstFetch={ setIsFirstFetch }
+             setLastFetch={ setLastFetch }
              setPlace={ setPlace }
              setPlaces={ setPlaces }
              setUserHasPanned={ setUserHasPanned }

@@ -12,8 +12,10 @@ class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // debugging
+      _remaining: 0,
+
       fetching: false, // set to true when a fetch is in progress
-      lastFetch: 0,    // set to Date.now() when a new fetch happens
       localGeo: false,
       myCenter: this.defaultCenter,
       mapCenter: this.defaultCenter,
@@ -132,8 +134,8 @@ class Map extends Component {
     // stop triggering new locations while a fetch is in progress
     this.unwatch();
 
-    const { fetching, lastFetch, mapCenter, timer } = this.state;
-    const { fetchDelay, setPlaces, userHasPanned } = this.props;
+    const { fetching, mapCenter, timer } = this.state;
+    const { fetchDelay, lastFetch, setLastFetch, setPlaces, userHasPanned } = this.props;
 
     const now = Date.now();
 
@@ -142,9 +144,10 @@ class Map extends Component {
 // console.log('🤞 about to fetch new places')
 
       this.setState({
-        fetching: true,
-        lastFetch: now
+        fetching: true
       });
+
+      setLastFetch(now);
 
       let places = getNearby(mapCenter.lat, mapCenter.lng);
       places.then(json => {
@@ -196,6 +199,10 @@ console.log('🌎 fetch delay in seconds', fetchDelay)
       else {
         // set timer for how much time is left
         const remaining = fetchDelay - elapsed;
+
+        this.setState({
+          _remaining: remaining
+        });
 
 // console.log('⏰ waiting to fetch new places')
 // console.log('⏲ remaining', remaining)
@@ -355,6 +362,18 @@ console.log('🤔 localGeo && !watcher && !userHasPanned')
           { geo && <Me lat={ myCenter.lat } lng={ myCenter.lng } /> }
         </GoogleMapReact>
         <MapCenter classNames={ mapCenterClassnames } />
+
+        { isDev ? (
+            <div style={{
+              position: 'absolute',
+              bottom: '10px',
+              left: '10px',
+              background: 'white',
+              padding: '4px',
+              border: 'solid 2px red'
+            }}>{ this.state._remaining }</div>
+          ) : null }
+
       </div>
     );
   }
