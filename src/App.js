@@ -20,10 +20,6 @@ const App = () => {
   const [places, setPlaces] = useState([]);
   const [userHasPanned, setUserHasPanned] = useState(true);
 
-  const handleApiLoaded = () => {
-    setApiLoaded(true);
-  };
-
   const handleTitleClick = evt => {
     setPlace(null);
   };
@@ -59,7 +55,7 @@ const App = () => {
              fetchDelay={ fetchDelay }
              geo={ geo }
              isFirstFetch={ isFirstFetch }
-             handleApiLoaded={ handleApiLoaded }
+             setApiLoaded={ setApiLoaded }
              places={ places }
              setIsFirstFetch={ setIsFirstFetch }
              setPlace={ setPlace }
