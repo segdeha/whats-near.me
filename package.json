@@ -8,7 +8,6 @@
     "@testing-library/user-event": "^7.1.2",
     "google-map-react": "^1.1.7",
     "kind-of": ">=6.0.3",
-    "localforage": "^1.7.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
