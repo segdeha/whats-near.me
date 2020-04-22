@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Route } from 'react-router-dom';
+import fetchDelayUtil from './lib/fetchDelayUtil';
 
 import Info from './Info';
 import Map from './Map';
@@ -8,19 +9,17 @@ import Settings from './Settings';
 import './App.css';
 
 const App = () => {
+  const delay = fetchDelayUtil.get();
+
   const [apiLoaded, setApiLoaded] = useState(false);
+  const [fetchDelay, setFetchDelay] = useState(delay); // in seconds
   const [geo, allowGeo] = useState(null);
   const [isFirstFetch, setIsFirstFetch] = useState(true);
+  const [lastFetch, setLastFetch] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [place, setPlace] = useState(null);
   const [places, setPlaces] = useState([]);
   const [userHasPanned, setUserHasPanned] = useState(true);
-
-  const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
-
-  const handleApiLoaded = () => {
-    setApiLoaded(true);
-  };
 
   const handleTitleClick = evt => {
     setPlace(null);
@@ -28,10 +27,11 @@ const App = () => {
 
   const handleCenterClick = evt => {
     evt.preventDefault();
-    if (geo) {
-      setUserHasPanned(false);
-    }
+    setUserHasPanned(false);
+    setLastFetch(0);
   };
+
+  const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
 
   const centerOnMeClasses = geo && userHasPanned ?
       'center-on-me active'
@@ -52,11 +52,14 @@ const App = () => {
       </header>
       <main className="App-map">
         <Map apiLoaded={ apiLoaded }
+             fetchDelay={ fetchDelay }
              geo={ geo }
              isFirstFetch={ isFirstFetch }
-             handleApiLoaded={ handleApiLoaded }
+             lastFetch={ lastFetch }
+             setApiLoaded={ setApiLoaded }
              places={ places }
              setIsFirstFetch={ setIsFirstFetch }
+             setLastFetch={ setLastFetch }
              setPlace={ setPlace }
              setPlaces={ setPlaces }
              setUserHasPanned={ setUserHasPanned }
@@ -71,7 +74,9 @@ const App = () => {
         />
       </footer>
       <Route path="/settings">
-        <Settings />
+        <Settings fetchDelay={ fetchDelay }
+                  setFetchDelay={ setFetchDelay }
+        />
       </Route>
     </div>
   );
