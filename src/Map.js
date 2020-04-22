@@ -12,22 +12,17 @@ class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // debugging
-      _remaining: 0,
-
       fetching: false, // set to true when a fetch is in progress
       localGeo: false,
       myCenter: this.defaultCenter,
       mapCenter: this.defaultCenter,
       timer: null,     // fetch timer
-      watcher: null    // for navigator.geolocation.watchPosition
     };
     this.logError = this.logError.bind(this);
     this.makeFirstFetch = this.makeFirstFetch.bind(this);
     this.newCenter = this.newCenter.bind(this);
     this.newNearbyPlaces = this.newNearbyPlaces.bind(this);
     this.panToCenter = this.panToCenter.bind(this);
-    this.unwatch = this.unwatch.bind(this);
     this.watch = this.watch.bind(this);
   }
 
@@ -48,8 +43,7 @@ class Map extends Component {
   // coming from navigator.geolocation.watchPosition
   newCenter(loc) {
     const { latitude, longitude } = loc.coords;
-    const { map, maps } = this.state;
-    const { isFirstFetch, userHasPanned } = this.props;
+    const { userHasPanned } = this.props;
 
     // set user center
     this.setState({
@@ -75,7 +69,7 @@ class Map extends Component {
   }
 
   makeFirstFetch() {
-    const { map, maps } = this.state;
+    const { map, maps, timer } = this.state;
     const { setIsFirstFetch, setUserHasPanned } = this.props;
 
     setIsFirstFetch(false);
@@ -85,32 +79,26 @@ class Map extends Component {
 
     // if user manually pans the map, stop watching for new locations
     map.addListener('dragstart', evt => {
-
-// console.log('🎬 map dragstart')
-
-      this.unwatch();
+      clearTimeout(timer);
       setUserHasPanned(true);
     });
 
     // when user stops manually panning the map, get places for
     // the new center
     map.addListener('dragend', () => {
-
-// console.log('🐉 map dragend')
-
-      let idleEvent;
       const handleIdle = () => {
-        this.newNearbyPlaces();
         maps.event.removeListener(idleEvent);
+        const latLng = map.getCenter();
+        this.setState({
+          mapCenter: {
+            lat: latLng.lat(),
+            lng: latLng.lng()
+          }
+        });
+        this.newNearbyPlaces();
       };
-      const latLng = map.getCenter();
-      this.setState({
-        mapCenter: {
-          lat: latLng.lat(),
-          lng: latLng.lng()
-        }
-      });
-      idleEvent = map.addListener('idle', handleIdle);
+
+      const idleEvent = map.addListener('idle', handleIdle);
     });
 
     // get first set of places
@@ -128,68 +116,44 @@ class Map extends Component {
   //        if not enough time has passed since the last fetch
   //            set a timeout to trigger a fetch once the remaining time has passed
   newNearbyPlaces(isFirstFetch) {
-
-// console.log('🆕 newNearbyPlaces')
-
-    // stop triggering new locations while a fetch is in progress
-    this.unwatch();
-
     const { fetching, mapCenter, timer } = this.state;
     const { fetchDelay, lastFetch, setLastFetch, setPlaces, userHasPanned } = this.props;
 
     const now = Date.now();
 
     const doFetch = () => {
-
-// console.log('🤞 about to fetch new places')
-
       this.setState({
         fetching: true
       });
+      clearTimeout(timer);
 
       setLastFetch(now);
 
-      let places = getNearby(mapCenter.lat, mapCenter.lng);
-      places.then(json => {
-
-console.log('✅ just fetched new places')
-
-        setPlaces(json.query.pages);
-        this.setState({
-          fetching: false
-        });
-        this.watch();
-      });
+      getNearby(mapCenter.lat, mapCenter.lng)
+        .then(json => {
+          setPlaces(json.query.pages);
+          this.setState({
+            fetching: false
+          });
+          this.watch();
+        })
+        .catch(this.logError);
     };
 
     // bail early if we have a timer set or are currently doing a fetch
     if (timer || fetching) {
-
-console.log('❌ not going to fetch because timer or fetching', timer, fetching)
-
       return;
     }
 
-// xyz // intentionally trigger an error
-
     if (isFirstFetch) {
-
-// console.log('🥇 is first fetch')
-
       doFetch();
     }
     else if (userHasPanned) {
-
-// console.log('🍳 user has panned')
-
       doFetch();
     }
     else {
       // convert to seconds to because fetchDelay is saved in seconds
       const elapsed = (now - lastFetch) / 1000;
-
-console.log('🌎 elapsed time in seconds', elapsed)
-console.log('🌎 fetch delay in seconds', fetchDelay)
 
       // elapsed time since last fetch is greater than the fetch delay
       if (elapsed > fetchDelay) {
@@ -201,43 +165,22 @@ console.log('🌎 fetch delay in seconds', fetchDelay)
         const remaining = fetchDelay - elapsed;
 
         this.setState({
-          _remaining: remaining
+          timer: setTimeout(() => {
+            this.setState({
+              timer: null
+            });
+            doFetch();
+          }, remaining * 1000)
         });
-
-// console.log('⏰ waiting to fetch new places')
-// console.log('⏲ remaining', remaining)
-
-        const newTimer = setTimeout(() => {
-
-console.log('🤡 inside setTimeout')
-
-          // shouldn't happen that we get here with another timer set,
-          // but this has bitten me enough times over the years that
-          // i'm being extra safe
-          clearTimeout(timer);
-          this.setState({
-            timer: null
-          });
-          doFetch();
-        }, remaining);
-        this.setState({ timer: newTimer });
       }
     }
   }
 
   panToCenter() {
-
-console.log('🍳🖕 panToCenter')
-
     const { myCenter, map, maps } = this.state;
     const { userHasPanned } = this.props;
 
-console.log('👍🍳 userHasPanned', userHasPanned)
-
     if (map && maps && !userHasPanned) {
-
-console.log('🚫🍳 userHasNotPanned')
-
       let idleEvent;
       const handleIdle = () => {
         this.newNearbyPlaces();
@@ -249,48 +192,23 @@ console.log('🚫🍳 userHasNotPanned')
   }
 
   watch() {
-    const { watcher } = this.state;
-    const { geo } = this.props;
-
-console.log('⌚️ about to start watching')
-
-    if (geo && !watcher) {
-      this.setState({
-        watcher: navigator.geolocation.watchPosition(this.newCenter, this.logError)
-      });
+    const { localGeo } = this.state;
+    if (localGeo) {
+      navigator.geolocation.watchPosition(this.newCenter, this.logError)
     }
   }
 
-  unwatch() {
-    const { watcher } = this.state;
-
-console.log('⏱ about to stop watching')
-
-    navigator.geolocation.clearWatch(watcher);
-    this.setState({
-      watcher: null
-    });
-  }
-
   componentDidUpdate() {
-
-console.log('☝️📅 componentDidUpdate')
-
     const { localGeo, map, maps, userHasPanned, watcher } = this.state;
     const { apiLoaded, geo, isFirstFetch, setUserHasPanned } = this.props;
-
-// console.log('🇲🇵 this.state', this.state)
-// console.log('🎭 this.props', this.props)
 
     if (apiLoaded && map && maps && isFirstFetch) {
       this.makeFirstFetch();
     }
 
-    // when the user grants location access, start watching for location changes
+    // start watching for location changes when the user grants
+    // location access for the first time
     if (geo && !watcher && !localGeo) {
-
-console.log('🌎🚫👀 geo && !watcher && !localGeo')
-
       this.setState({
         localGeo: true
       });
@@ -298,11 +216,9 @@ console.log('🌎🚫👀 geo && !watcher && !localGeo')
       setUserHasPanned(false);
     }
 
-    if (localGeo && !watcher && !userHasPanned) {
-
-console.log('🤔 localGeo && !watcher && !userHasPanned')
-
-      this.watch();
+    // basically a no-op if a fetch is in progress or pending
+    if (localGeo && !userHasPanned) {
+      this.panToCenter();
     }
   };
 
@@ -358,18 +274,6 @@ console.log('🤔 localGeo && !watcher && !userHasPanned')
           { geo && <Me lat={ myCenter.lat } lng={ myCenter.lng } /> }
         </GoogleMapReact>
         <MapCenter classNames={ mapCenterClassnames } />
-
-        { isDev ? (
-            <div style={{
-              position: 'absolute',
-              bottom: '10px',
-              left: '10px',
-              background: 'white',
-              padding: '4px',
-              border: 'solid 2px red'
-            }}>{ this.state._remaining }</div>
-          ) : null }
-
       </div>
     );
   }

@@ -7,9 +7,6 @@ const Info = props => {
   const { place, geo, allowGeo, setIsVideoPlaying } = props;
 
   const handleClick = () => {
-
-console.log('👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎👍🌎')
-
     allowGeo(true);
   };
 
