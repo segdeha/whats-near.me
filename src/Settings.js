@@ -6,6 +6,7 @@ import fetchDelayUtil from './lib/fetchDelayUtil';
 
 const Settings = props => {
   const { fetchDelay, setFetchDelay } = props;
+  // keep min & max in sync with fetchDelayUtil
   const [min, max, step] = [0, 30, 5];
 
   const handleFetchDelayChange = value => {

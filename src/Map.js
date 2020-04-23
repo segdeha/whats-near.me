@@ -132,12 +132,15 @@ class Map extends Component {
       getNearby(mapCenter.lat, mapCenter.lng)
         .then(json => {
           setPlaces(json.query.pages);
+        })
+        .catch(this.logError)
+        .finally(() => {
           this.setState({
             fetching: false
           });
           this.watch();
         })
-        .catch(this.logError);
+      ;
     };
 
     // bail early if we have a timer set or are currently doing a fetch
@@ -161,8 +164,8 @@ class Map extends Component {
       }
       // not enough time has elapsed, so set a timer to fetch later
       else {
-        // set timer for how much time is left
-        const remaining = fetchDelay - elapsed;
+        // set timer for how much time is left, convert to milliseconds
+        const remaining = (fetchDelay - elapsed) * 1000;
 
         this.setState({
           timer: setTimeout(() => {
@@ -170,7 +173,7 @@ class Map extends Component {
               timer: null
             });
             doFetch();
-          }, remaining * 1000)
+          }, remaining)
         });
       }
     }
@@ -216,7 +219,8 @@ class Map extends Component {
       setUserHasPanned(false);
     }
 
-    // basically a no-op if a fetch is in progress or pending
+    // this gets hit a lot, but is basically a no-op if a fetch is
+    // in progress or pending
     if (localGeo && !userHasPanned) {
       this.panToCenter();
     }
