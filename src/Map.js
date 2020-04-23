@@ -131,7 +131,9 @@ class Map extends Component {
 
       getNearby(mapCenter.lat, mapCenter.lng)
         .then(json => {
-          setPlaces(json.query.pages);
+          if (json.query && json.query.pages) {
+            setPlaces(json.query.pages);
+          }
         })
         .catch(this.logError)
         .finally(() => {
