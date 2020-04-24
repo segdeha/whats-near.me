@@ -81,11 +81,9 @@ class Map extends Component {
     map.addListener('dragstart', evt => {
       clearTimeout(timer);
       setUserHasPanned(true);
-    });
 
-    // when user stops manually panning the map, get places for
-    // the new center
-    map.addListener('dragend', () => {
+      // when user stops manually panning the map, get places for
+      // the new center
       const handleIdle = () => {
         maps.event.removeListener(idleEvent);
         const latLng = map.getCenter();
