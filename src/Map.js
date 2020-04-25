@@ -70,7 +70,7 @@ class Map extends Component {
 
   makeFirstFetch() {
     const { map, maps, timer } = this.state;
-    const { setIsFirstFetch, setUserHasPanned } = this.props;
+    const { setIsFirstFetch, setLastFetch, setUserHasPanned } = this.props;
 
     setIsFirstFetch(false);
 
@@ -93,6 +93,7 @@ class Map extends Component {
             lng: latLng.lng()
           }
         });
+        setLastFetch(0); // set back to 0 so there's no delay fetching
         this.newNearbyPlaces();
       };
 
@@ -181,11 +182,12 @@ class Map extends Component {
 
   panToCenter() {
     const { myCenter, map, maps } = this.state;
-    const { userHasPanned } = this.props;
+    const { setLastFetch, userHasPanned } = this.props;
 
     if (map && maps && !userHasPanned) {
       let idleEvent;
       const handleIdle = () => {
+        setLastFetch(0); // set back to 0 so there's no delay fetching
         this.newNearbyPlaces();
         maps.event.removeListener(idleEvent);
       };
