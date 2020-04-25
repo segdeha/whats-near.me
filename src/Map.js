@@ -13,11 +13,14 @@ class Map extends Component {
     super(props);
     this.state = {
       fetching: false, // set to true when a fetch is in progress
+      idleEvent: null, // used to cancel `idle` event listener
       localGeo: false,
       myCenter: this.defaultCenter,
       mapCenter: this.defaultCenter,
+      panning: false,
       timer: null,     // fetch timer
     };
+    this.handleIdle = this.handleIdle.bind(this);
     this.logError = this.logError.bind(this);
     this.makeFirstFetch = this.makeFirstFetch.bind(this);
     this.newCenter = this.newCenter.bind(this);
@@ -37,6 +40,13 @@ class Map extends Component {
     // only log warnings in development
     if (isDev()) {
       console.warn('ERROR(' + err.code + '): ' + err.message)
+    }
+  }
+
+  watch() {
+    const { localGeo } = this.state;
+    if (localGeo) {
+      navigator.geolocation.watchPosition(this.newCenter, this.logError)
     }
   }
 
@@ -68,9 +78,26 @@ class Map extends Component {
     this.panToCenter();
   }
 
+  // when user stops manually panning the map, get places for
+  // the new center
+  handleIdle() {
+    const { idleEvent, map, maps } = this.state;
+
+    maps.event.removeListener(idleEvent);
+    const latLng = map.getCenter();
+    this.setState({
+      mapCenter: {
+        lat: latLng.lat(),
+        lng: latLng.lng()
+      },
+      panning: false
+    });
+    this.newNearbyPlaces();
+  }
+
   makeFirstFetch() {
-    const { map, maps, timer } = this.state;
-    const { setIsFirstFetch, setLastFetch, setUserHasPanned } = this.props;
+    const { map, timer } = this.state;
+    const { setIsFirstFetch, setUserHasPanned } = this.props;
 
     setIsFirstFetch(false);
 
@@ -81,27 +108,27 @@ class Map extends Component {
     map.addListener('dragstart', evt => {
       clearTimeout(timer);
       setUserHasPanned(true);
-
-      // when user stops manually panning the map, get places for
-      // the new center
-      const handleIdle = () => {
-        maps.event.removeListener(idleEvent);
-        const latLng = map.getCenter();
-        this.setState({
-          mapCenter: {
-            lat: latLng.lat(),
-            lng: latLng.lng()
-          }
-        });
-        setLastFetch(0); // set back to 0 so there's no delay fetching
-        this.newNearbyPlaces();
-      };
-
-      const idleEvent = map.addListener('idle', handleIdle);
+      this.setState({
+        idleEvent: map.addListener('idle', this.handleIdle),
+        panning: true
+      });
     });
 
     // get first set of places
     this.newNearbyPlaces(true);
+  }
+
+  panToCenter() {
+    const { myCenter, map, maps } = this.state;
+    const { userHasPanned } = this.props;
+
+    if (map && maps && !userHasPanned) {
+      this.setState({
+        idleEvent: map.addListener('idle', this.handleIdle),
+        panning: true
+      });
+      map.panTo(new maps.LatLng(myCenter.lat, myCenter.lng));
+    }
   }
 
   // conditions under which we want to fetch new places:
@@ -139,7 +166,6 @@ class Map extends Component {
           this.setState({
             fetching: false
           });
-          this.watch();
         })
       ;
     };
@@ -180,33 +206,11 @@ class Map extends Component {
     }
   }
 
-  panToCenter() {
-    const { myCenter, map, maps } = this.state;
-    const { setLastFetch, userHasPanned } = this.props;
-
-    if (map && maps && !userHasPanned) {
-      let idleEvent;
-      const handleIdle = () => {
-        setLastFetch(0); // set back to 0 so there's no delay fetching
-        this.newNearbyPlaces();
-        maps.event.removeListener(idleEvent);
-      };
-      idleEvent = map.addListener('idle', handleIdle);
-      map.panTo(new maps.LatLng(myCenter.lat, myCenter.lng));
-    }
-  }
-
-  watch() {
-    const { localGeo } = this.state;
-    if (localGeo) {
-      navigator.geolocation.watchPosition(this.newCenter, this.logError)
-    }
-  }
-
-  componentDidUpdate() {
-    const { localGeo, map, maps, userHasPanned, watcher } = this.state;
+  componentDidUpdate(prevProps, prevState) {
+    const { fetching, localGeo, map, maps, panning, userHasPanned, watcher } = this.state;
     const { apiLoaded, geo, isFirstFetch, setUserHasPanned } = this.props;
 
+    // should only ever fire once, on app load
     if (apiLoaded && map && maps && isFirstFetch) {
       this.makeFirstFetch();
     }
@@ -223,7 +227,7 @@ class Map extends Component {
 
     // this gets hit a lot, but is basically a no-op if a fetch is
     // in progress or pending
-    if (localGeo && !userHasPanned) {
+    if (localGeo && !userHasPanned && !panning && !fetching) {
       this.panToCenter();
     }
   };
