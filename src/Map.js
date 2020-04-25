@@ -221,8 +221,8 @@ class Map extends Component {
       this.setState({
         localGeo: true
       });
-      this.watch();
       setUserHasPanned(false);
+      window.requestAnimationFrame(this.watch);
     }
 
     // this gets hit a lot, but is basically a no-op if a fetch is
