@@ -12,7 +12,7 @@ const Info = props => {
 
   if (place) {
     let { title, description, thumb } = place;
-    const wikiLink = `https://www.wikipedia.org/search-redirect.php?search=${title}&family=wikipedia&hiddenLanguageInput=en`;
+    const wikiLink = `https://www.wikipedia.org/search-redirect.php?search=${encodeURIComponent(title)}&family=wikipedia&hiddenLanguageInput=en`;
     return (
       <div className="App-info-container">
         <p><strong>{ firstCap(title) }</strong></p>
