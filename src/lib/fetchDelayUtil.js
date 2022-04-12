@@ -5,7 +5,7 @@ const fetchDelayUtil = {
 
     // keep these values in sync with Settings
     if (null === value) {
-      value = 15;
+      value = 0; // larger numbers make less frequent requests, setting this to 0 gives a better first-run experience
     }
     else {
       // values in localStorage are strings, so cast as a number
