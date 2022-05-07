@@ -17,6 +17,7 @@ const App = () => {
   const [isFirstFetch, setIsFirstFetch] = useState(true);
   const [lastFetch, setLastFetch] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [place, setPlace] = useState(null);
   const [places, setPlaces] = useState([]);
   const [userHasPanned, setUserHasPanned] = useState(true);
@@ -32,13 +33,14 @@ const App = () => {
   };
 
   const videoIsPlaying = isVideoPlaying ? 'expanded' : '';
+  const fullscreen = isFullscreen ? 'fullscreen' : '';
 
   const centerOnMeClasses = geo && userHasPanned ?
       'center-on-me active'
     : 'center-on-me';
 
   return (
-    <div className={ `App ${videoIsPlaying}` }>
+    <div className={ `App ${videoIsPlaying} ${fullscreen}` }>
       <header className="App-header">
         <Link className={ centerOnMeClasses } to="/" onClick={ handleCenterClick }>
           <img src="/img/center-on-me.png" alt="Center on me" />
@@ -71,6 +73,7 @@ const App = () => {
               place={ place }
               allowGeo={ allowGeo }
               setIsVideoPlaying={ setIsVideoPlaying }
+              setIsFullscreen={ setIsFullscreen }
         />
       </footer>
       <Route path="/settings">

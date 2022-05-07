@@ -4,10 +4,11 @@ import Details from './Details.js';
 import { firstCap } from './lib/text';
 
 const Info = props => {
-  const { place, geo, allowGeo, setIsVideoPlaying } = props;
+  const { place, geo, allowGeo, setIsVideoPlaying, setIsFullscreen } = props;
 
   const handleClick = () => {
     allowGeo(true);
+    setIsFullscreen(true);
   };
 
   if (place) {
