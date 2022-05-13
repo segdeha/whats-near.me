@@ -8,7 +8,7 @@
     .App.expanded .App-info {
       height: 75%;
     }
-  .App.fullscreen {}
+/*  .App.fullscreen {}
     .App.fullscreen .App-map {
       bottom: 0;
       height: auto;
@@ -16,7 +16,7 @@
     .App.fullscreen .App-info {
       height: 0;
     }
-
+*/
 .App-header {
   align-items: center;
   background-color: #2e355e;
